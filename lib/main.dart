@@ -1,3 +1,4 @@
+import 'package:bachu/screens/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,11 +21,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Bachu',
       theme: ThemeData(fontFamily: 'e-Ukraine'),
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      home: Scaffold(body: AuthPage()),
     );
   }
 }
