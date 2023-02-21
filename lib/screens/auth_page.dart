@@ -71,6 +71,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 Expanded(
                     child: TextField(
+                  keyboardType: TextInputType.phone,
                   inputFormatters: [LengthLimitingTextInputFormatter(9)],
                   style: TextStyle(color: Colors.white, fontSize: 17),
                   decoration: InputDecoration(
