@@ -81,6 +81,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
+  contact_picker_platform_interface:
+    dependency: transitive
+    description:
+      name: contact_picker_platform_interface
+      sha256: "40847ffa0f6e6755c0047e8ef35c4b622a2b053f41ef175d22c19f03984a9ed1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
+  contact_picker_web:
+    dependency: transitive
+    description:
+      name: contact_picker_web
+      sha256: "13e739a6ce8f3286e441028dec5967b90fd2d5ceaec53045ae054b030877fe31"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
+  country_phone_code_picker:
+    dependency: "direct main"
+    description:
+      name: country_phone_code_picker
+      sha256: a0ee8e4b398e2f5d6fca205d8809772c10e8a5ca48de419fc6b7ae311ea6c4bc
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.41"
+  extended_phone_number_input:
+    dependency: "direct main"
+    description:
+      name: extended_phone_number_input
+      sha256: af41a682b115e50d5d11259628e9d3e0677cf966d4b639cf5ab2b2b7f06f612d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   fake_async:
     dependency: transitive
     description:
@@ -176,6 +208,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluttercontactpicker:
+    dependency: transitive
+    description:
+      name: fluttercontactpicker
+      sha256: cddd2ba4631f97927adb59c53a529ee8f965e8685eded66a6d5988347aef6ec4
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
   geolocator:
     dependency: "direct main"
     description:
@@ -352,6 +392,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
+  phone_number_metadata:
+    dependency: transitive
+    description:
+      name: phone_number_metadata
+      sha256: "32d42fac690951941fe9ddd7fd62e79ea98fab46141ddc9e5f8322885b68f9b0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
+  phone_numbers_parser:
+    dependency: transitive
+    description:
+      name: phone_numbers_parser
+      sha256: "35eb7499bed3ddce7415c75b9485ffbc5c9d87a5111c81202f64a1f6f040ddf0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   plugin_platform_interface:
     dependency: transitive
     description:

@@ -19,9 +19,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Bachu',
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+        body: AuthPage(),
       ),
     );
   }
