@@ -12,6 +12,8 @@ dependencies:
   firebase_core:
   firebase_auth:
   cloud_firestore:
+  extended_phone_number_input:
+  country_phone_code_picker:
   flutter:
     sdk: flutter
 
