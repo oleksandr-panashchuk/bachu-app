@@ -1,5 +1,5 @@
 name: bachu
-description: A new Flutter project.
+description: Bachu
 publish_to: 'none'
 version: 0.1.0
 
@@ -8,6 +8,10 @@ environment:
 
 dependencies:
   change_app_package_name: ^1.1.0
+  get:
+  firebase_core:
+  firebase_auth:
+  cloud_firestore:
   flutter:
     sdk: flutter
 
