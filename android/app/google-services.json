@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "492486940955",
+    "project_id": "bacho-be1ff",
+    "storage_bucket": "bacho-be1ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492486940955:android:9abc131a3e492317b75bbe",
+        "android_client_info": {
+          "package_name": "com.bachu.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492486940955-jftk5so5gf76pu3lcetpb3iqiuo6rapm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bachu.app",
+            "certificate_hash": "5030ce802fd78c300621cd28a1a73ad529c8d58c"
+          }
+        },
+        {
+          "client_id": "492486940955-1siof4u1tgg896nc8qanam0qe6l7vm24.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKmcPibLfiQYV0tFCkVHp6UxYDvHoFi4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492486940955-1siof4u1tgg896nc8qanam0qe6l7vm24.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
