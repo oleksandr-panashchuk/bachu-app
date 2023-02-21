@@ -22,3 +22,22 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+  - assets/
+
+  fonts:
+      - family: Anurati
+        fonts:
+          - asset: assets/fonts/Anurati-Regular.otf
+      - family: e-Ukraine
+        fonts:
+          - asset: assets/fonts/e-Ukraine-Regular.otf
+            weight: 400
+          - asset: assets/fonts/e-Ukraine-Medium.otf
+            weight: 500
+          - asset: assets/fonts/e-Ukraine-Bold.otf
+            weight: 700
+      - family: Keania
+        fonts:
+          - asset: assets/fonts/KeaniaOne-Regular.ttf

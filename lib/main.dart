@@ -16,8 +16,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Bachu',
+      theme: ThemeData(fontFamily: 'e-Ukraine'),
       home: Scaffold(
         body: Center(
           child: Text('Hello World!'),
