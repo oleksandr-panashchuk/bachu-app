@@ -1,5 +1,5 @@
 name: bachu
-description: A new Flutter project.
+description: Bachu
 publish_to: 'none'
 version: 0.1.0
 
@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter: ^2.1.1
+  firebase_core: ^2.7.0
+  get: any
+  firebase_auth: any
+  cloud_firestore: any
   location: ^4.4.0
   intl: ^0.18.0
   geolocator: ^9.0.2
@@ -23,3 +27,22 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+  - assets/
+
+  fonts:
+      - family: Anurati
+        fonts:
+          - asset: assets/fonts/Anurati-Regular.otf
+      - family: e-Ukraine
+        fonts:
+          - asset: assets/fonts/e-Ukraine-Regular.otf
+            weight: 400
+          - asset: assets/fonts/e-Ukraine-Medium.otf
+            weight: 500
+          - asset: assets/fonts/e-Ukraine-Bold.otf
+            weight: 700
+      - family: Keania
+        fonts:
+          - asset: assets/fonts/KeaniaOne-Regular.ttf
