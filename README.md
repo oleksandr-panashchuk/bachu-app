@@ -24,4 +24,4 @@ In summary, **Bachu** is a must-have application for anyone looking to stay conn
 
 ## Author
 
-This Application is developed by [Oleksadr Panashchuk](https://github.com/oleksandr-panashchuk). You can contact me at <ioleksandr.panashchuk@gmail.com>.
+This Application is organized by [Oleksadr Panashchuk](https://github.com/oleksandr-panashchuk). You can contact me at <ioleksandr.panashchuk@gmail.com>.
