@@ -21,6 +21,7 @@ dependencies:
   intl: ^0.18.0
   geolocator: ^9.0.2
   flutter_geocoder: ^0.2.2-nullsafety
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

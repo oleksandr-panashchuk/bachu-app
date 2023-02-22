@@ -1,7 +1,9 @@
-import 'package:bachu/screens/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:bachu/screens/auth_page.dart';
+import 'screens/request_permissions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Bachu',
       home: Scaffold(
-        body: AuthPage(),
+        body: RequestPermissions(),
       ),
     );
   }
