@@ -21,6 +21,8 @@ dependencies:
   geolocator: ^9.0.2
   flutter_geocoder: ^0.2.2-nullsafety
   font_awesome_flutter:
+  optimize_battery:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:

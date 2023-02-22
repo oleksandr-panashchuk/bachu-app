@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "492486940955",
+    "firebase_url": "https://bacho-be1ff-default-rtdb.firebaseio.com",
     "project_id": "bacho-be1ff",
     "storage_bucket": "bacho-be1ff.appspot.com"
   },
@@ -22,7 +23,15 @@
           }
         },
         {
-          "client_id": "492486940955-1siof4u1tgg896nc8qanam0qe6l7vm24.apps.googleusercontent.com",
+          "client_id": "492486940955-p8mdh52m1rtli11bb2phjngb6b5mh44c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bachu.app",
+            "certificate_hash": "80cdfaa373ae5b8a9678c0f5c9dcc14144a2585e"
+          }
+        },
+        {
+          "client_id": "492486940955-v51dnffspvv0ic0prvo5nq8g1p9e1878.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -37,6 +46,13 @@
             {
               "client_id": "492486940955-1siof4u1tgg896nc8qanam0qe6l7vm24.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "492486940955-khg5h4a3788eumj3oaujb47nt2kasrt4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bachu.app"
+              }
             }
           ]
         }
