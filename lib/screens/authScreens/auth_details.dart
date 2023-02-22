@@ -1,4 +1,5 @@
 import 'package:bachu/screens/authScreens/ban.dart';
+import 'package:bachu/screens/authScreens/congrats.dart';
 import 'package:bachu/screens/firebase_services.dart';
 import 'package:bachu/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -550,11 +551,17 @@ class _AuthDetailsState extends State<AuthDetails> {
                     ignoring: allGood ? false : true,
                     child: GestureDetector(
                       onTap: () async {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()),
-                            (route) => false);
+                        var db = FirebaseFirestore.instance.collection('users');
+                        db
+                            .doc('${FirebaseAuth.instance.currentUser!.email}')
+                            .set({
+                          'username': username.text,
+                          'name': name.text,
+                          'surname': surname.text,
+                          'age': age.text
+                        });
+                        Get.until((route) => false);
+                        Get.to(() => Congrats(), transition: Transition.zoom);
                       },
                       child: Container(
                         padding: EdgeInsets.all(21),

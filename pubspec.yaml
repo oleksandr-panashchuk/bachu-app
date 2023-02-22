@@ -23,6 +23,7 @@ dependencies:
   font_awesome_flutter:
   optimize_battery:
   permission_handler:
+  slide_to_act:
 
 dev_dependencies:
   flutter_test:
