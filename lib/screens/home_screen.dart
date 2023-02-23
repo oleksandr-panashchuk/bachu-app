@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          var db = FirebaseFirestore.instance.collection('phoneNumber');
           String imageURL =
               "https://img.icons8.com/fluency/256/region-code.png";
           getUserCurrentLocation().then((value) async {
@@ -67,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     .buffer
                     .asUint8List();
             final coordinates = Coordinates(value.latitude, value.longitude);
-            db.doc('user').set({'latitude': 71.23, 'longitude': 23.58});
             var adress =
                 await Geocoder.local.findAddressesFromCoordinates(coordinates);
             _markers.add(Marker(
