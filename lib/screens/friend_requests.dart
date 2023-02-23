@@ -103,8 +103,88 @@ class _FriendRequestsState extends State<FriendRequests> {
                                   Text(data['username'],
                                       style: TextStyle(
                                           color: Colors.white.withOpacity(0.45),
-                                          fontSize: 15))
+                                          fontSize: 15)),
                                 ],
+                              ),
+                              Spacer(),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .collection('friend_requests')
+                                      .doc(data['email'])
+                                      .delete();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(color: Colors.yellow)),
+                                  child: Icon(Icons.cancel_outlined,
+                                      color: Colors.yellow),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 7,
+                              ),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  CollectionReference sourceCollection =
+                                      FirebaseFirestore.instance
+                                          .collection('users');
+                                  CollectionReference targetCollection =
+                                      FirebaseFirestore.instance
+                                          .collection('users');
+                                  DocumentReference sourceDoc =
+                                      sourceCollection.doc(data['email']);
+                                  DocumentReference myDoc = sourceCollection.doc(
+                                      '${FirebaseAuth.instance.currentUser!.email}');
+                                  DocumentReference friendDoc = sourceCollection
+                                      .doc(data['email'])
+                                      .collection('my_friends')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}');
+                                  DocumentReference targetDoc = targetCollection
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .collection('my_friends')
+                                      .doc(data['email']);
+                                  DocumentSnapshot sourceSnapshot =
+                                      await sourceDoc.get();
+                                  Map<String, dynamic> sourceData =
+                                      sourceSnapshot.data()
+                                          as Map<String, dynamic>;
+                                  DocumentSnapshot mySnapshot =
+                                      await myDoc.get();
+                                  Map<String, dynamic> myData =
+                                      mySnapshot.data() as Map<String, dynamic>;
+                                  await targetDoc.set(sourceData);
+                                  await friendDoc.set(myData);
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .collection('friend_requests')
+                                      .doc(data['email'])
+                                      .delete();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(color: Colors.yellow)),
+                                  child: Icon(Icons.done, color: Colors.yellow),
+                                ),
                               )
                             ],
                           ),

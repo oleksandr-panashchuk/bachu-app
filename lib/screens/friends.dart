@@ -69,50 +69,90 @@ class _FriendsState extends State<Friends> {
               ],
             ),
           ),
-          // StreamBuilder<QuerySnapshot>(
-          //   stream: friends,
-          //   builder: (context, snapshots) {
-          //     return (snapshots.connectionState == ConnectionState.waiting)
-          //         ? Center(
-          //             child: CircularProgressIndicator(color: Colors.yellow))
-          //         : ListView.builder(
-          //             shrinkWrap: true,
-          //             physics: BouncingScrollPhysics(),
-          //             itemCount: snapshots.data!.docs.length,
-          //             itemBuilder: (context, index) {
-          //               var data = snapshots.data!.docs[index].data()
-          //                   as Map<String, dynamic>;
-          //               return Container(
-          //                 padding: EdgeInsets.all(17),
-          //                 decoration: BoxDecoration(
-          //                     color: Colors.white.withOpacity(0.07),
-          //                     borderRadius: BorderRadius.circular(17)),
-          //                 child: Row(
-          //                   crossAxisAlignment: CrossAxisAlignment.center,
-          //                   children: [
-          //                     Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.start,
-          //                       children: [
-          //                         Text('${data['name']} ${data['surname']}',
-          //                             style: TextStyle(
-          //                                 color: Colors.white,
-          //                                 fontSize: 21,
-          //                                 fontWeight: FontWeight.w500)),
-          //                         SizedBox(
-          //                           height: 5,
-          //                         ),
-          //                         Text(data['username'],
-          //                             style: TextStyle(
-          //                                 color: Colors.white.withOpacity(0.52),
-          //                                 fontSize: 16))
-          //                       ],
-          //                     )
-          //                   ],
-          //                 ),
-          //               );
-          //             });
-          //   },
-          // ),
+          StreamBuilder<QuerySnapshot>(
+            stream: friends,
+            builder: (context, snapshots) {
+              return (snapshots.connectionState == ConnectionState.waiting)
+                  ? Center(
+                      child: CircularProgressIndicator(color: Colors.yellow))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: snapshots.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        var data = snapshots.data!.docs[index].data()
+                            as Map<String, dynamic>;
+                        return Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 21, vertical: 5),
+                          padding: EdgeInsets.all(17),
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.07),
+                              borderRadius: BorderRadius.circular(17)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(150),
+                                  image: DecorationImage(
+                                      image: NetworkImage(data['photo']),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('${data['name']} ${data['surname']}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400)),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(data['username'],
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.45),
+                                          fontSize: 15)),
+                                ],
+                              ),
+                              Spacer(),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .collection('my_friends')
+                                      .doc(data['email'])
+                                      .delete();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(color: Colors.yellow)),
+                                  child: Icon(Icons.cancel_outlined,
+                                      color: Colors.yellow),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+            },
+          ),
         ],
       ),
     );
