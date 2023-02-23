@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:bachu/screens/friends.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -64,6 +66,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FloatingActionButton(
+                heroTag: 'friends',
+                backgroundColor: Colors.black,
+                elevation: 0,
+                onPressed: () {
+                  Get.to(() => Friends(), transition: Transition.downToUp);
+                },
+                child: Icon(Icons.people_alt, color: Colors.yellow)),
+            Spacer(),
+            FloatingActionButton(
+                heroTag: 'me',
+                backgroundColor: Colors.black,
+                elevation: 0,
+                onPressed: () {},
+                child: Icon(Icons.location_on, color: Colors.yellow)),
+            Spacer(),
+            FloatingActionButton(
+                heroTag: 'profile',
+                backgroundColor: Colors.black,
+                elevation: 0,
+                onPressed: () {},
+                child: Icon(Icons.person, color: Colors.yellow)),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
