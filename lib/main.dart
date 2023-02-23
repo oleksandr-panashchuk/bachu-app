@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Bachu',
       home: Scaffold(
-        body: HomeScreen(),
+        body: AuthPage(),
       ),
     );
   }

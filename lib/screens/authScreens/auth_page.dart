@@ -1,6 +1,7 @@
 import 'package:bachu/screens/authScreens/auth_details.dart';
 import 'package:bachu/screens/authScreens/ban.dart';
 import 'package:bachu/screens/firebase_services.dart';
+import 'package:bachu/screens/friends.dart';
 import 'package:bachu/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,7 +77,7 @@ class _AuthPageState extends State<AuthPage> {
                     // ignore: use_build_context_synchronously
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(builder: (context) => Friends()),
                         (route) => false);
                   }
                   if (exists == false) {
