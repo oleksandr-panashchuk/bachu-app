@@ -553,6 +553,7 @@ class _AuthDetailsState extends State<AuthDetails> {
                     ignoring: allGood ? false : true,
                     child: GestureDetector(
                       onTap: () async {
+                        final position = await Geolocator.getCurrentPosition();
                         var db = FirebaseFirestore.instance.collection('users');
                         db
                             .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -560,6 +561,8 @@ class _AuthDetailsState extends State<AuthDetails> {
                           'username': username.text,
                           'name': name.text,
                           'surname': surname.text,
+                          'latitude': position.latitude,
+                          'longitude': position.longitude,
                           'age': age.text,
                           'photo':
                               '${FirebaseAuth.instance.currentUser!.photoURL}',
