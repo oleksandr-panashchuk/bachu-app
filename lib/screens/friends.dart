@@ -16,7 +16,7 @@ class _FriendsState extends State<Friends> {
       .instance
       .collection('users')
       .doc('${FirebaseAuth.instance.currentUser!.email}')
-      .collection('${FirebaseAuth.instance.currentUser!.email}_friends')
+      .collection('my_friends')
       .snapshots();
 
   @override

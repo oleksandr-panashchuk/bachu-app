@@ -558,7 +558,10 @@ class _AuthDetailsState extends State<AuthDetails> {
                           'username': username.text,
                           'name': name.text,
                           'surname': surname.text,
-                          'age': age.text
+                          'age': age.text,
+                          'photo':
+                              '${FirebaseAuth.instance.currentUser!.photoURL}',
+                          'email': '${FirebaseAuth.instance.currentUser!.email}'
                         });
                         Get.until((route) => false);
                         Get.to(() => Congrats(), transition: Transition.zoom);

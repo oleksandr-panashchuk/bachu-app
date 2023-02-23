@@ -1,6 +1,8 @@
+import 'package:bachu/screens/friend_requests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AddFriend extends StatefulWidget {
   const AddFriend({super.key});
@@ -24,6 +26,8 @@ class _AddFriendState extends State<AddFriend> {
     return document.exists;
   }
 
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,21 +36,68 @@ class _AddFriendState extends State<AddFriend> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 77,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-            child: Text('Додати друга',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500)),
+            height: 82,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
-            child: Text('З друзями кращу, ніж без них.',
-                style: TextStyle(
-                    color: Colors.white.withOpacity(0.35), fontSize: 17)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Запроси друга',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26.5,
+                            fontWeight: FontWeight.w500)),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text('З друзями кращу, ніж без них.',
+                        style: TextStyle(
+                            color: Colors.white.withOpacity(0.35),
+                            fontSize: 14)),
+                  ],
+                ),
+                Spacer(),
+                InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap: () {
+                    Get.to(() => FriendRequests(),
+                        transition: Transition.upToDown);
+                  },
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.yellow)),
+                        child: Icon(Icons.people, color: Colors.yellow),
+                      ),
+                      Container(
+                        width: 21,
+                        height: 21,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(150)),
+                        child: Text('1',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500)),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
           SizedBox(
             height: 14,
@@ -87,21 +138,20 @@ class _AddFriendState extends State<AddFriend> {
                         reged = exists;
                       });
                       if (exists == true) {
-                        var myFriends = FirebaseFirestore.instance
-                            .collection('users')
-                            .doc('${FirebaseAuth.instance.currentUser!.email}')
-                            .collection(
-                                '${FirebaseAuth.instance.currentUser!.email}_friends');
-                        var amtFriend = FirebaseFirestore.instance
-                            .collection('users')
+                        CollectionReference sourceCollection =
+                            FirebaseFirestore.instance.collection('users');
+                        CollectionReference targetCollection =
+                            FirebaseFirestore.instance.collection('users');
+                        DocumentReference sourceDoc = sourceCollection
+                            .doc('${FirebaseAuth.instance.currentUser!.email}');
+                        DocumentReference targetDoc = targetCollection
                             .doc(friend.text)
-                            .collection('${friend.text}_friends');
-                        amtFriend
-                            .doc('${FirebaseAuth.instance.currentUser!.email}')
-                            .set({'friend': 'yes'}, SetOptions(merge: true));
-                        myFriends
-                            .doc(friend.text)
-                            .set({'friend': 'yes'}, SetOptions(merge: true));
+                            .collection('friend_requests')
+                            .doc('${FirebaseAuth.instance.currentUser!.email}');
+                        DocumentSnapshot sourceSnapshot = await sourceDoc.get();
+                        Map<String, dynamic> sourceData =
+                            sourceSnapshot.data() as Map<String, dynamic>;
+                        await targetDoc.set(sourceData);
                       }
                       if (exists == false) {
                         return;
