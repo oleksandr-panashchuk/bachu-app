@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'user_location.dart';
+import 'package:bachu/classes/user_location.dart';
 import 'package:location/location.dart';
 
 class LocationService {

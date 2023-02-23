@@ -25,6 +25,8 @@ class _AuthDetailsState extends State<AuthDetails> {
   TextEditingController name = TextEditingController();
   TextEditingController surname = TextEditingController();
   TextEditingController age = TextEditingController();
+  double? latitude;
+  double? longitude;
 
   final pageController = PageController();
 
