@@ -77,7 +77,7 @@ class _AuthPageState extends State<AuthPage> {
                     // ignore: use_build_context_synchronously
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => Friends()),
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
                         (route) => false);
                   }
                   if (exists == false) {
