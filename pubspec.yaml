@@ -24,6 +24,8 @@ dependencies:
   optimize_battery:
   permission_handler:
   slide_to_act:
+  fluttertoast: ^8.2.1
+  flutter_polyline_points: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +37,7 @@ flutter:
 
   assets:
   - assets/
+  - assets/themes/map/map_theme.json
 
   fonts:
       - family: Anurati
