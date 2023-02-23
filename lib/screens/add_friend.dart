@@ -36,7 +36,29 @@ class _AddFriendState extends State<AddFriend> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 82,
+            height: 52,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                width: 45,
+                height: 45,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.yellow),
+                    borderRadius: BorderRadius.circular(15)),
+                child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 25,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
@@ -54,7 +76,7 @@ class _AddFriendState extends State<AddFriend> {
                     SizedBox(
                       height: 5,
                     ),
-                    Text('З друзями кращу, ніж без них.',
+                    Text('З друзями краще, ніж без них.',
                         style: TextStyle(
                             color: Colors.white.withOpacity(0.35),
                             fontSize: 14)),

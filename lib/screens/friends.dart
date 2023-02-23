@@ -27,7 +27,29 @@ class _FriendsState extends State<Friends> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 77,
+            height: 52,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                width: 45,
+                height: 45,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.yellow),
+                    borderRadius: BorderRadius.circular(15)),
+                child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 25,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
@@ -109,7 +131,7 @@ class _FriendsState extends State<Friends> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('${data['name']} ${data['surname']}',
+                                  Text('${data['name']}\n${data['surname']}',
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
