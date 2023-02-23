@@ -28,6 +28,32 @@ class _AddFriendState extends State<AddFriend> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  int documentsCount = 0;
+
+  bool reqs = false;
+
+  countReq() async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('friend_request')
+        .get();
+    setState(() {
+      documentsCount = querySnapshot.size;
+    });
+    if (documentsCount > 0) {
+      setState(() {
+        reqs = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    countReq();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,19 +128,21 @@ class _AddFriendState extends State<AddFriend> {
                             border: Border.all(color: Colors.yellow)),
                         child: Icon(Icons.people, color: Colors.yellow),
                       ),
-                      Container(
-                        width: 21,
-                        height: 21,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(150)),
-                        child: Text('1',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500)),
-                      ),
+                      reqs
+                          ? Container(
+                              width: 21,
+                              height: 21,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(150)),
+                              child: Text(documentsCount.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500)),
+                            )
+                          : Container(),
                     ],
                   ),
                 )
