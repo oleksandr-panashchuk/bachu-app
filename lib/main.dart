@@ -1,8 +1,8 @@
+import 'package:bachu/screens/authScreens/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:bachu/screens/auth_page.dart';
+import 'package:get/get.dart';
 import 'screens/request_permissions.dart';
 
 void main() async {
@@ -10,7 +10,7 @@ void main() async {
   await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -18,7 +18,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Bachu',
       home: Scaffold(
         body: RequestPermissions(),

@@ -8,8 +8,6 @@ environment:
 
 dependencies:
   change_app_package_name: ^1.1.0
-  extended_phone_number_input:
-  country_phone_code_picker:
   flutter:
     sdk: flutter
   google_maps_flutter: ^2.1.1
@@ -17,10 +15,12 @@ dependencies:
   get: any
   firebase_auth: any
   cloud_firestore: any
+  google_sign_in:
   location: ^4.4.0
   intl: ^0.18.0
   geolocator: ^9.0.2
   flutter_geocoder: ^0.2.2-nullsafety
+  font_awesome_flutter:
   permission_handler: ^10.2.0
 
 dev_dependencies:
