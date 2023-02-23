@@ -115,23 +115,11 @@ class _FriendRequestsState extends State<FriendRequests> {
                               SizedBox(
                                 width: 12,
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('${data['name']}\n${data['surname']}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400)),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(data['username'],
-                                      style: TextStyle(
-                                          color: Colors.white.withOpacity(0.45),
-                                          fontSize: 15)),
-                                ],
-                              ),
+                              Text('${data['name']}\n${data['surname']}',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400)),
                               Spacer(),
                               InkWell(
                                 borderRadius: BorderRadius.circular(15),
