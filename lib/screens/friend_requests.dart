@@ -66,6 +66,8 @@ class _FriendRequestsState extends State<FriendRequests> {
                         var data = snapshots.data!.docs[index].data()
                             as Map<String, dynamic>;
                         return Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 21, vertical: 5),
                           padding: EdgeInsets.all(17),
                           decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.07),
@@ -73,21 +75,35 @@ class _FriendRequestsState extends State<FriendRequests> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Container(
+                                alignment: Alignment.center,
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(150),
+                                  image: DecorationImage(
+                                      image: NetworkImage(data['photo']),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text('${data['name']} ${data['surname']}',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500)),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400)),
                                   SizedBox(
                                     height: 5,
                                   ),
                                   Text(data['username'],
                                       style: TextStyle(
                                           color: Colors.white.withOpacity(0.45),
-                                          fontSize: 16))
+                                          fontSize: 15))
                                 ],
                               )
                             ],
