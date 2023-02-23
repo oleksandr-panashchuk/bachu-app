@@ -28,29 +28,34 @@ class _AddFriendState extends State<AddFriend> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  int documentsCount = 0;
-
   bool reqs = false;
 
-  countReq() async {
-    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  int count = 0;
+
+  void countDocuments() async {
+    CollectionReference collectionReference = FirebaseFirestore.instance
         .collection('users')
         .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('friend_request')
-        .get();
-    setState(() {
-      documentsCount = querySnapshot.size;
+        .collection('friend_requests');
+
+    collectionReference.snapshots().listen((querySnapshot) {
+      int count = querySnapshot.size;
+      if (count > 0) {
+        setState(() {
+          reqs = true;
+        });
+      }
+      if (count == 0) {
+        setState(() {
+          reqs = false;
+        });
+      }
     });
-    if (documentsCount > 0) {
-      setState(() {
-        reqs = true;
-      });
-    }
   }
 
   @override
   void initState() {
-    countReq();
+    countDocuments();
     super.initState();
   }
 
@@ -136,7 +141,7 @@ class _AddFriendState extends State<AddFriend> {
                               decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(150)),
-                              child: Text(documentsCount.toString(),
+                              child: Text(count.toString(),
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
