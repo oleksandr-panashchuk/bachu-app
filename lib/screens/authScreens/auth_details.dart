@@ -25,6 +25,8 @@ class _AuthDetailsState extends State<AuthDetails> {
   TextEditingController name = TextEditingController();
   TextEditingController surname = TextEditingController();
   TextEditingController age = TextEditingController();
+  double? latitude;
+  double? longitude;
 
   final pageController = PageController();
 
@@ -558,7 +560,8 @@ class _AuthDetailsState extends State<AuthDetails> {
                           'username': username.text,
                           'name': name.text,
                           'surname': surname.text,
-                          'age': age.text
+                          'age': age.text,
+                          'timestamp': FieldValue.serverTimestamp(),
                         });
                         Get.until((route) => false);
                         Get.to(() => Congrats(), transition: Transition.zoom);
