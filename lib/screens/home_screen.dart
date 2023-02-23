@@ -15,6 +15,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final Completer<GoogleMapController> _controller = Completer();
+  String? mapTheme;
+
+  static const CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(50.618503037894925, 26.255840063614464),
+    zoom: 14,
+  );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    DefaultAssetBundle.of(context)
+        .loadString('assets/themes/map/map_theme.json')
+        .then((value) {
+      mapTheme = value;
+    });
+  }
 
   final List<Marker> _markers = <Marker>[
     const Marker(
@@ -34,11 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(50.618503037894925, 26.255840063614464),
-    zoom: 14,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
           compassEnabled: false,
           zoomControlsEnabled: false,
           onMapCreated: (GoogleMapController controller) {
+            controller.setMapStyle(mapTheme);
             _controller.complete(controller);
           },
         ),

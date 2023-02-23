@@ -1,5 +1,6 @@
 import 'package:bachu/screens/authScreens/auth_page.dart';
 import 'package:bachu/screens/home_screen.dart';
+import 'package:bachu/test_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +25,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Bachu',
       home: Scaffold(
-        body: HomeScreen(),
+        body: MySecondApp(),
       ),
     );
   }
