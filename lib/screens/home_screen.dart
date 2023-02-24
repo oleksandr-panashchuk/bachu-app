@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:bachu/screens/friends.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,10 +19,24 @@ class _HomeScreenState extends State<HomeScreen> {
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
   String? mapTheme;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   late StreamSubscription<Position> _positionStreamSubscription;
   double latitudes = 50.618503037894925;
   double longitudes = 26.255840063614464;
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Future<void> getUserLocation() async {
+    final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .get();
+
+    final double latitude = snapshot.get('latitude');
+    final double longitude = snapshot.get('longitude');
+    print('Coords: $latitude / $longitude');
+  }
 
   @override
   void initState() {
@@ -35,6 +51,15 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         latitudes = position.latitude;
         longitudes = position.longitude;
+        firestore
+            .collection('users')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .update({
+              'latitude': position.latitude,
+              'longitude': position.longitude,
+            })
+            .then((value) => print("Coords updated successfully"))
+            .catchError((error) => print("Failed to update coords: $error"));
         _removeMarkersWithTitle("Моя локація");
         _markers.add(Marker(
           markerId:
@@ -45,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
       });
+      getUserLocation();
       print('${position.latitude} / ${position.longitude}');
     });
   }
