@@ -22,10 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   late StreamSubscription<Position> _positionStreamSubscription;
-  double latitudes = 50.618503037894925;
-  double longitudes = 26.255840063614464;
   late Future<Map<String, dynamic>> _initialCameraPositionFuture;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final List<Marker> _markers = <Marker>[];
 
   Future<void> getUserLocation() async {
     final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
@@ -36,6 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
     final double latitude = snapshot.get('latitude');
     final double longitude = snapshot.get('longitude');
     print('Coords: $latitude / $longitude');
+  }
+
+  Future<Map<String, dynamic>> getInitialCameraPosition() async {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .get();
+    final double latitude = doc.get('latitude');
+    final double longitude = doc.get('longitude');
+    return {
+      "latitude": latitude,
+      "longitude": longitude,
+    };
+  }
+
+  void _removeMarkersWithTitle(String title) {
+    setState(() {
+      _markers.removeWhere((marker) => marker.infoWindow.title == title);
+    });
   }
 
   @override
@@ -80,31 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final List<Marker> _markers = <Marker>[];
-
-  void _removeMarkersWithTitle(String title) {
-    setState(() {
-      _markers.removeWhere((marker) => marker.infoWindow.title == title);
-    });
-  }
-
   @override
   void dispose() {
     _positionStreamSubscription.cancel();
     super.dispose();
-  }
-
-  Future<Map<String, dynamic>> getInitialCameraPosition() async {
-    final DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .get();
-    final double latitude = doc.get('latitude');
-    final double longitude = doc.get('longitude');
-    return {
-      "latitude": latitude,
-      "longitude": longitude,
-    };
   }
 
   @override
@@ -128,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
               snapshot.data!['latitude'],
               snapshot.data!['longitude'],
             ),
-            zoom: 15,
+            zoom: 14,
           );
           return Scaffold(
             floatingActionButton: Padding(
@@ -151,7 +148,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       heroTag: 'me',
                       backgroundColor: Colors.black,
                       elevation: 0,
-                      onPressed: () {},
+                      onPressed: () async {
+                        final DocumentSnapshot<
+                            Map<String,
+                                dynamic>> snapshot = await firestore
+                            .collection('users')
+                            .doc('${FirebaseAuth.instance.currentUser!.email}')
+                            .get();
+                        GoogleMapController controller =
+                            await _controller.future;
+                        controller.animateCamera(
+                            CameraUpdate.newCameraPosition(CameraPosition(
+                          target: LatLng(snapshot.get('latitude'),
+                              snapshot.get('longitude')),
+                          zoom: 14,
+                        )));
+                        setState(() {});
+                      },
                       child: Icon(Icons.location_on, color: Colors.yellow)),
                   Spacer(),
                   FloatingActionButton(
