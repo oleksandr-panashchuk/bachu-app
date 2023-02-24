@@ -129,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
             zoom: 14,
           );
           return Scaffold(
-            
             floatingActionButton: Padding(
               padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
               child: Row(
@@ -137,85 +136,83 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
-              onTap: () {
-                Get.to(() => Friends(), transition: Transition.downToUp);
-              },
-              borderRadius: BorderRadius.circular(17),
-              child: Container(
-                width: 58,
-                height: 58,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.90),
+                    onTap: () {
+                      Get.to(() => Friends(), transition: Transition.downToUp);
+                    },
                     borderRadius: BorderRadius.circular(17),
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 17,
-                          offset: Offset(-1, 2),
-                          color: Colors.yellow.withOpacity(0.07))
-                    ]),
-                child: Icon(Icons.people_alt, color: Colors.yellow),
-              ),
-            ),
+                    child: Container(
+                      width: 58,
+                      height: 58,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.90),
+                          borderRadius: BorderRadius.circular(17),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 17,
+                                offset: Offset(-1, 2),
+                                color: Colors.yellow.withOpacity(0.07))
+                          ]),
+                      child: Icon(Icons.people_alt, color: Colors.yellow),
+                    ),
+                  ),
                   Spacer(),
                   InkWell(
-              onTap: () {
-                final DocumentSnapshot<
-                            Map<String,
-                                dynamic>> snapshot = await firestore
-                            .collection('users')
-                            .doc('${FirebaseAuth.instance.currentUser!.email}')
-                            .get();
-                        GoogleMapController controller =
-                            await _controller.future;
-                        controller.animateCamera(
-                            CameraUpdate.newCameraPosition(CameraPosition(
-                          target: LatLng(snapshot.get('latitude'),
-                              snapshot.get('longitude')),
-                          zoom: 14,
-                        )));
-                        setState(() {});
-              },
-              borderRadius: BorderRadius.circular(17),
-              child: Container(
-                width: 58,
-                height: 58,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.90),
+                    onTap: () async {
+                      final DocumentSnapshot<Map<String, dynamic>> snapshot =
+                          await firestore
+                              .collection('users')
+                              .doc(
+                                  '${FirebaseAuth.instance.currentUser!.email}')
+                              .get();
+                      GoogleMapController controller = await _controller.future;
+                      controller.animateCamera(
+                          CameraUpdate.newCameraPosition(CameraPosition(
+                        target: LatLng(snapshot.get('latitude'),
+                            snapshot.get('longitude')),
+                        zoom: 14,
+                      )));
+                      setState(() {});
+                    },
                     borderRadius: BorderRadius.circular(17),
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 17,
-                          offset: Offset(-1, 2),
-                          color: Colors.yellow.withOpacity(0.07))
-                    ]),
-                child: Icon(Icons.location_on, color: Colors.yellow),
-              ),
-            ),
-                  
+                    child: Container(
+                      width: 58,
+                      height: 58,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.90),
+                          borderRadius: BorderRadius.circular(17),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 17,
+                                offset: Offset(-1, 2),
+                                color: Colors.yellow.withOpacity(0.07))
+                          ]),
+                      child: Icon(Icons.location_on, color: Colors.yellow),
+                    ),
+                  ),
                   Spacer(),
                   InkWell(
-              onTap: () {
-                Get.to(() => Profile(), transition: Transition.downToUp);
-              },
-              borderRadius: BorderRadius.circular(17),
-              child: Container(
-                width: 58,
-                height: 58,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.90),
+                    onTap: () {
+                      Get.to(() => Profile(), transition: Transition.downToUp);
+                    },
                     borderRadius: BorderRadius.circular(17),
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 17,
-                          offset: Offset(-1, 2),
-                          color: Colors.yellow.withOpacity(0.07))
-                    ]),
-                child: Icon(Icons.person, color: Colors.yellow),
-              ),
-            ),
+                    child: Container(
+                      width: 58,
+                      height: 58,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.90),
+                          borderRadius: BorderRadius.circular(17),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 17,
+                                offset: Offset(-1, 2),
+                                color: Colors.yellow.withOpacity(0.07))
+                          ]),
+                      child: Icon(Icons.person, color: Colors.yellow),
+                    ),
+                  ),
                 ],
               ),
             ),
