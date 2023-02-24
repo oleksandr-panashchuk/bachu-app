@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late StreamSubscription<Position> _positionStreamSubscription;
   double latitudes = 50.618503037894925;
   double longitudes = 26.255840063614464;
-
+  late Future<Map<String, dynamic>> _initialCameraPositionFuture;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> getUserLocation() async {
@@ -41,16 +41,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _initialCameraPositionFuture = getInitialCameraPosition();
     DefaultAssetBundle.of(context)
         .loadString('assets/themes/map/map_theme.json')
         .then((value) {
       mapTheme = value;
     });
     _positionStreamSubscription =
-        Geolocator.getPositionStream().listen((position) {
+        Geolocator.getPositionStream().listen((position) async {
+      final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
+          .collection('users')
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .get();
+
+      final double latitude = snapshot.get('latitude');
+      final double longitude = snapshot.get('longitude');
       setState(() {
-        latitudes = position.latitude;
-        longitudes = position.longitude;
         firestore
             .collection('users')
             .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -62,9 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
             .catchError((error) => print("Failed to update coords: $error"));
         _removeMarkersWithTitle("Моя локація");
         _markers.add(Marker(
-          markerId:
-              MarkerId('${Timestamp.now().microsecondsSinceEpoch}_my_location'),
-          position: LatLng(latitudes, longitudes),
+          markerId: MarkerId('my_location'),
+          position: LatLng(latitude, longitude),
           infoWindow: InfoWindow(
             title: "Моя локація",
           ),
@@ -89,57 +94,90 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<Map<String, dynamic>> getInitialCameraPosition() async {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .get();
+    final double latitude = doc.get('latitude');
+    final double longitude = doc.get('longitude');
+    return {
+      "latitude": latitude,
+      "longitude": longitude,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FloatingActionButton(
-                heroTag: 'friends',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {
-                  Get.to(() => Friends(), transition: Transition.downToUp);
+    return FutureBuilder(
+        future: _initialCameraPositionFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          // Here you can access the initial camera position from snapshot.data
+          final initialCameraPosition = CameraPosition(
+            target: LatLng(
+              snapshot.data!['latitude'],
+              snapshot.data!['longitude'],
+            ),
+            zoom: 15,
+          );
+          return Scaffold(
+            floatingActionButton: Padding(
+              padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  FloatingActionButton(
+                      heroTag: 'friends',
+                      backgroundColor: Colors.black,
+                      elevation: 0,
+                      onPressed: () {
+                        Get.to(() => Friends(),
+                            transition: Transition.downToUp);
+                      },
+                      child: Icon(Icons.people_alt, color: Colors.yellow)),
+                  Spacer(),
+                  FloatingActionButton(
+                      heroTag: 'me',
+                      backgroundColor: Colors.black,
+                      elevation: 0,
+                      onPressed: () {},
+                      child: Icon(Icons.location_on, color: Colors.yellow)),
+                  Spacer(),
+                  FloatingActionButton(
+                      heroTag: 'profile',
+                      backgroundColor: Colors.black,
+                      elevation: 0,
+                      onPressed: () {},
+                      child: Icon(Icons.person, color: Colors.yellow)),
+                ],
+              ),
+            ),
+            body: SafeArea(
+              child: GoogleMap(
+                initialCameraPosition: initialCameraPosition,
+                markers: Set<Marker>.of(_markers),
+                mapType: MapType.normal,
+                myLocationEnabled: false,
+                compassEnabled: false,
+                zoomControlsEnabled: false,
+                onMapCreated: (GoogleMapController controller) {
+                  controller.setMapStyle(mapTheme);
+                  _controller.complete(controller);
                 },
-                child: Icon(Icons.people_alt, color: Colors.yellow)),
-            Spacer(),
-            FloatingActionButton(
-                heroTag: 'me',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {},
-                child: Icon(Icons.location_on, color: Colors.yellow)),
-            Spacer(),
-            FloatingActionButton(
-                heroTag: 'profile',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {},
-                child: Icon(Icons.person, color: Colors.yellow)),
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(latitudes, longitudes),
-            zoom: 14,
-          ),
-          markers: Set<Marker>.of(_markers),
-          mapType: MapType.normal,
-          myLocationEnabled: false,
-          compassEnabled: false,
-          zoomControlsEnabled: false,
-          onMapCreated: (GoogleMapController controller) {
-            controller.setMapStyle(mapTheme);
-            _controller.complete(controller);
-          },
-        ),
-      ),
-    );
+              ),
+            ),
+          );
+        });
   }
 }
