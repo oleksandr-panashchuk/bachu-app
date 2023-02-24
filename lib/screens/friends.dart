@@ -70,7 +70,7 @@ class _FriendsState extends State<Friends> {
                     Text('Чим більше - тим краще.',
                         style: TextStyle(
                             color: Colors.white.withOpacity(0.35),
-                            fontSize: 17)),
+                            fontSize: 16)),
                   ],
                 ),
                 Spacer(),
@@ -155,6 +155,13 @@ class _FriendsState extends State<Friends> {
                                           '${FirebaseAuth.instance.currentUser!.email}')
                                       .collection('my_friends')
                                       .doc(data['email'])
+                                      .delete();
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(data['email'])
+                                      .collection('my_friends')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
                                       .delete();
                                 },
                                 child: Container(

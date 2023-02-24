@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bachu/screens/friends.dart';
+import 'package:bachu/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -72,28 +73,71 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            FloatingActionButton(
-                heroTag: 'friends',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {
-                  Get.to(() => Friends(), transition: Transition.downToUp);
-                },
-                child: Icon(Icons.people_alt, color: Colors.yellow)),
+            InkWell(
+              onTap: () {
+                Get.to(() => Friends(), transition: Transition.downToUp);
+              },
+              borderRadius: BorderRadius.circular(17),
+              child: Container(
+                width: 58,
+                height: 58,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.90),
+                    borderRadius: BorderRadius.circular(17),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 17,
+                          offset: Offset(-1, 2),
+                          color: Colors.yellow.withOpacity(0.07))
+                    ]),
+                child: Icon(Icons.people_alt, color: Colors.yellow),
+              ),
+            ),
             Spacer(),
-            FloatingActionButton(
-                heroTag: 'me',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {},
-                child: Icon(Icons.location_on, color: Colors.yellow)),
+            InkWell(
+              onTap: () {
+                Get.to(() => Friends(), transition: Transition.downToUp);
+              },
+              borderRadius: BorderRadius.circular(17),
+              child: Container(
+                width: 58,
+                height: 58,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.90),
+                    borderRadius: BorderRadius.circular(17),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 17,
+                          offset: Offset(-1, 2),
+                          color: Colors.yellow.withOpacity(0.07))
+                    ]),
+                child: Icon(Icons.location_on, color: Colors.yellow),
+              ),
+            ),
             Spacer(),
-            FloatingActionButton(
-                heroTag: 'profile',
-                backgroundColor: Colors.black,
-                elevation: 0,
-                onPressed: () {},
-                child: Icon(Icons.person, color: Colors.yellow)),
+            InkWell(
+              onTap: () {
+                Get.to(() => Profile(), transition: Transition.downToUp);
+              },
+              borderRadius: BorderRadius.circular(17),
+              child: Container(
+                width: 58,
+                height: 58,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.90),
+                    borderRadius: BorderRadius.circular(17),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 17,
+                          offset: Offset(-1, 2),
+                          color: Colors.yellow.withOpacity(0.07))
+                    ]),
+                child: Icon(Icons.person, color: Colors.yellow),
+              ),
+            ),
           ],
         ),
       ),
