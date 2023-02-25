@@ -72,6 +72,12 @@ class _AuthDetailsState extends State<AuthDetails> {
   }
 
   @override
+  void initState() {
+    boolsCheck();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color.fromRGBO(3, 3, 3, 1),
