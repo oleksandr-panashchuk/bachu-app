@@ -647,6 +647,8 @@ class _AuthDetailsState extends State<AuthDetails> {
                               '${FirebaseAuth.instance.currentUser!.photoURL}',
                           'email': '${FirebaseAuth.instance.currentUser!.email}'
                         });
+                        Get.until((route) => false);
+                        Get.to(() => Congrats(), transition: Transition.zoom);
                       },
                       child: Container(
                         padding: EdgeInsets.all(21),
