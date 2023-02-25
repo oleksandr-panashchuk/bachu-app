@@ -41,7 +41,9 @@ class _AddFriendState extends State<AddFriend> {
         .collection('friend_requests');
 
     collectionReference.snapshots().listen((querySnapshot) {
-      int count = querySnapshot.size;
+      setState(() {
+        count = querySnapshot.size;
+      });
       if (count > 0) {
         setState(() {
           reqs = true;
