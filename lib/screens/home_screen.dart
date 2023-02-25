@@ -98,6 +98,23 @@ class _HomeScreenState extends State<HomeScreen> {
       getUserLocation();
       print('${position.latitude} / ${position.longitude}');
     });
+    final userCollection = FirebaseFirestore.instance.collection('users');
+    final currentUserEmail = FirebaseAuth.instance.currentUser!.email;
+
+    // Отримання всіх документів з колекції users, що містять колекцію my_friends
+    final documentsSnapshot = await userCollection
+        .where('my_friends.$currentUserEmail', isEqualTo: true)
+        .get();
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    documentsSnapshot.docs.forEach((doc) {
+      final myFriendsDocRef =
+          doc.reference.collection('my_friends').doc(currentUserEmail);
+      batch.set(myFriendsDocRef, doc.data());
+    });
+
+    await batch.commit();
   }
 
   @override
