@@ -27,6 +27,7 @@ dependencies:
   fluttertoast: ^8.2.1
   flutter_polyline_points: ^1.0.0
   smooth_page_indicator:
+  http:
 
 dev_dependencies:
   flutter_test:

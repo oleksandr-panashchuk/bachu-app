@@ -4,10 +4,12 @@ import 'package:bachu/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +19,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+
+  void cstmIcon() {
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(), 'assets/themes/map/geo.png')
+        .then((icon) {
+      setState(() {
+        markerIcon = icon;
+      });
+    });
+  }
+
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
   String? mapTheme;
@@ -98,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    cstmIcon();
     countDocuments();
     super.initState();
     getUsers();
@@ -146,12 +161,12 @@ class _HomeScreenState extends State<HomeScreen> {
             .catchError((error) => print("Failed to update coords: $error"));
         _removeMarkersWithTitle("Моя локація");
         _markers.add(Marker(
-          markerId: MarkerId('my_location'),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: "Моя локація",
-          ),
-        ));
+            markerId: MarkerId('my_location'),
+            position: LatLng(latitude, longitude),
+            infoWindow: InfoWindow(
+              title: "Моя локація",
+            ),
+            icon: markerIcon));
       });
       getUserLocation();
       print('${position.latitude} / ${position.longitude}');
