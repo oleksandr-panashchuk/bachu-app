@@ -51,6 +51,25 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
+  Future<void> getUsers() async {
+    CollectionReference subSourceCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('my_friends');
+    QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
+
+    for (var doc in subQuerySnapshot.docs) {
+      _markers.add(Marker(
+        markerId: MarkerId('my_location'),
+        position: LatLng(doc['latitude'], doc['longitude']),
+        infoWindow: InfoWindow(
+          title: "${doc['email']}",
+        ),
+      ));
+      print('${doc['email']} | ${doc['latitude']} ${doc['longitude']}');
+    }
+  }
+
   void _removeMarkersWithTitle(String title) {
     setState(() {
       _markers.removeWhere((marker) => marker.infoWindow.title == title);
@@ -81,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     countDocuments();
     super.initState();
+    getUsers();
     _initialCameraPositionFuture = getInitialCameraPosition();
     DefaultAssetBundle.of(context)
         .loadString('assets/themes/map/map_theme.json')
@@ -96,7 +116,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final double latitude = snapshot.get('latitude');
       final double longitude = snapshot.get('longitude');
-      setState(() {
+      setState(() async {
+        // CollectionReference subSourceCollection = FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc('${FirebaseAuth.instance.currentUser!.email}')
+        //     .collection('my_friends');
+        // QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
+
+        // for (var doc in subQuerySnapshot.docs) {
+        //   _removeMarkersWithTitle("${doc['email']}");
+        //   _markers.add(Marker(
+        //     markerId: MarkerId('my_location'),
+        //     position: LatLng(doc['latitude'], doc['longitude']),
+        //     infoWindow: InfoWindow(
+        //       title: "${doc['email']}",
+        //     ),
+        //   ));
+        //   print('${doc['email']} | ${doc['latitude']} ${doc['longitude']}');
+        // }
+
         firestore
             .collection('users')
             .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -173,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
               snapshot.data!['latitude'],
               snapshot.data!['longitude'],
             ),
-            zoom: 14,
+            zoom: 16,
           );
           return Scaffold(
             backgroundColor: Color.fromRGBO(3, 3, 3, 1),
@@ -218,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           CameraUpdate.newCameraPosition(CameraPosition(
                         target: LatLng(snapshot.get('latitude'),
                             snapshot.get('longitude')),
-                        zoom: 14,
+                        zoom: 16,
                       )));
                       setState(() {});
                     },
