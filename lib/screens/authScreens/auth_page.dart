@@ -67,25 +67,21 @@ class _AuthPageState extends State<AuthPage> {
 
                 if (banned == true) {
                   // ignore: use_build_context_synchronously
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => Ban()),
-                      (route) => false);
+                  Get.until((route) => false);
+                  Get.to(() => Ban(), transition: Transition.leftToRight);
                 }
                 if (banned == false) {
                   if (exists == true) {
                     // ignore: use_build_context_synchronously
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                        (route) => false);
+                    Get.until((route) => false);
+                    Get.to(() => HomeScreen(),
+                        transition: Transition.leftToRight);
                   }
                   if (exists == false) {
                     // ignore: use_build_context_synchronously
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => AuthDetails()),
-                        (route) => false);
+                    Get.until((route) => false);
+                    Get.to(() => AuthDetails(),
+                        transition: Transition.leftToRight);
                   }
                 }
               },

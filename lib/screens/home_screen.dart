@@ -58,7 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
+  void initState() async {
+    countDocuments();
     super.initState();
     _initialCameraPositionFuture = getInitialCameraPosition();
     DefaultAssetBundle.of(context)
@@ -105,6 +106,31 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  bool reqs = false;
+
+  int count = 0;
+
+  void countDocuments() async {
+    CollectionReference collectionReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('friend_requests');
+
+    collectionReference.snapshots().listen((querySnapshot) {
+      int count = querySnapshot.size;
+      if (count > 0) {
+        setState(() {
+          reqs = true;
+        });
+      }
+      if (count == 0) {
+        setState(() {
+          reqs = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -129,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
             zoom: 14,
           );
           return Scaffold(
+            backgroundColor: Color.fromRGBO(3, 3, 3, 1),
             floatingActionButton: Padding(
               padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
               child: Row(

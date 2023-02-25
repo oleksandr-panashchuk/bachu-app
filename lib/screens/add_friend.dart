@@ -16,6 +16,8 @@ class _AddFriendState extends State<AddFriend> {
 
   bool reged = true;
 
+  bool accept = false;
+
   Future<bool> checkIfDocumentExists(
       String collectionName, String documentId) async {
     final DocumentSnapshot document = await FirebaseFirestore.instance
@@ -207,6 +209,9 @@ class _AddFriendState extends State<AddFriend> {
                         Map<String, dynamic> sourceData =
                             sourceSnapshot.data() as Map<String, dynamic>;
                         await targetDoc.set(sourceData);
+                        setState(() {
+                          accept = true;
+                        });
                       }
                       if (exists == false) {
                         return;
@@ -236,6 +241,15 @@ class _AddFriendState extends State<AddFriend> {
             child: Text('Цей користувач не зареєстрований.',
                 style: TextStyle(
                     color: reged ? Colors.transparent : Colors.red,
+                    fontSize: 13)),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+            child: Text('Запрос було надіслано.',
+                style: TextStyle(
+                    color: accept
+                        ? Color.fromRGBO(3, 201, 136, 1)
+                        : Colors.transparent,
                     fontSize: 13)),
           ),
         ],

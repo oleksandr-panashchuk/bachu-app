@@ -165,11 +165,35 @@ class _AuthDetailsState extends State<AuthDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 77,
+                  height: 52,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: InkWell(
+                    onTap: () {
+                      pageController.previousPage(
+                          duration: Duration(milliseconds: 350),
+                          curve: Curves.easeInOut);
+                    },
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.yellow),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 3),
-                  child: Text('Ваше ім\'я',
+                  child: Text('Твоє ім\'я',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 25,
@@ -177,7 +201,7 @@ class _AuthDetailsState extends State<AuthDetails> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25),
-                  child: Text('Введіть Ваше ім\'я та прізвище.',
+                  child: Text('Введи своє ім\'я та прізвище.',
                       style: TextStyle(
                           color: Colors.white.withOpacity(0.35), fontSize: 17)),
                 ),
@@ -292,7 +316,31 @@ class _AuthDetailsState extends State<AuthDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 77,
+                  height: 52,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: InkWell(
+                    onTap: () {
+                      pageController.previousPage(
+                          duration: Duration(milliseconds: 350),
+                          curve: Curves.easeInOut);
+                    },
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.yellow),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 3),
@@ -382,7 +430,31 @@ class _AuthDetailsState extends State<AuthDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 71,
+                  height: 52,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: InkWell(
+                    onTap: () {
+                      pageController.previousPage(
+                          duration: Duration(milliseconds: 350),
+                          curve: Curves.easeInOut);
+                    },
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.yellow),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25),
@@ -446,6 +518,7 @@ class _AuthDetailsState extends State<AuthDetails> {
                                 .onError((error, stackTrace) async {
                               await Geolocator.requestPermission();
                             });
+                            await Geolocator.getCurrentPosition();
                             setState(() {
                               locationCheck = false;
                             });
@@ -568,8 +641,6 @@ class _AuthDetailsState extends State<AuthDetails> {
                               '${FirebaseAuth.instance.currentUser!.photoURL}',
                           'email': '${FirebaseAuth.instance.currentUser!.email}'
                         });
-                        Get.until((route) => false);
-                        Get.to(() => Congrats(), transition: Transition.zoom);
                       },
                       child: Container(
                         padding: EdgeInsets.all(21),
