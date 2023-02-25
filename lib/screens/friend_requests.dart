@@ -60,7 +60,7 @@ class _FriendRequestsState extends State<FriendRequests> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Твої запроси',
+                    Text('Твої запити',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 30,
