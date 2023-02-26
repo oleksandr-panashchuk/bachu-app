@@ -80,7 +80,7 @@ class _AuthDetailsState extends State<AuthDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+        backgroundColor: Color.fromRGBO(12, 12, 9, 1),
         body: PageView(
           controller: pageController,
           physics: NeverScrollableScrollPhysics(),

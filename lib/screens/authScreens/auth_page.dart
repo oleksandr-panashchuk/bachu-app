@@ -24,7 +24,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+        backgroundColor: Color.fromRGBO(12, 12, 9, 1),
         body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
             height: 77,

@@ -63,10 +63,24 @@ class _AddFriendState extends State<AddFriend> {
     super.initState();
   }
 
+  double padding = 15;
+
+  animOn() {
+    setState(() {
+      padding = 12;
+    });
+  }
+
+  animOff() {
+    setState(() {
+      padding = 15;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+      backgroundColor: Color.fromRGBO(12, 12, 9, 1),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -184,6 +198,9 @@ class _AddFriendState extends State<AddFriend> {
                 ),
                 GestureDetector(
                   onTap: () async {
+                    animOn();
+                    await Future.delayed(Duration(milliseconds: 90));
+                    animOff();
                     if (friend.text.isEmpty) {
                       setState(() {
                         reged = true;
@@ -220,8 +237,9 @@ class _AddFriendState extends State<AddFriend> {
                       }
                     }
                   },
-                  child: Container(
-                    padding: EdgeInsets.all(15),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 90),
+                    padding: EdgeInsets.all(padding),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         boxShadow: [

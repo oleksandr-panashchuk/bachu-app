@@ -20,7 +20,7 @@ class _FriendRequestsState extends State<FriendRequests> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+      backgroundColor: Color.fromRGBO(12, 12, 9, 1),
       body: Column(
         children: [
           SizedBox(

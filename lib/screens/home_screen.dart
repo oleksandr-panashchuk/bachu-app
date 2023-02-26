@@ -21,16 +21,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
-  void cstmIcon() {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(), 'assets/themes/map/geo.png')
-        .then((icon) {
-      setState(() {
-        markerIcon = icon;
-      });
-    });
-  }
-
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
   String? mapTheme;
@@ -66,6 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getUsers() async {
+    String imageURL = 'https://ibb.co/RzzHDvD';
+    Uint8List bytes =
+        (await NetworkAssetBundle(Uri.parse(imageURL)).load(imageURL))
+            .buffer
+            .asUint8List();
     CollectionReference subSourceCollection = FirebaseFirestore.instance
         .collection('users')
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -112,7 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    cstmIcon();
     countDocuments();
     super.initState();
     getUsers();
@@ -131,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final double latitude = snapshot.get('latitude');
       final double longitude = snapshot.get('longitude');
-      setState(() async {
+      setState(() {
         // CollectionReference subSourceCollection = FirebaseFirestore.instance
         //     .collection('users')
         //     .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -161,12 +155,12 @@ class _HomeScreenState extends State<HomeScreen> {
             .catchError((error) => print("Failed to update coords: $error"));
         _removeMarkersWithTitle("Моя локація");
         _markers.add(Marker(
-            markerId: MarkerId('my_location'),
-            position: LatLng(latitude, longitude),
-            infoWindow: InfoWindow(
-              title: "Моя локація",
-            ),
-            icon: markerIcon));
+          markerId: MarkerId('my_location'),
+          position: LatLng(latitude, longitude),
+          infoWindow: InfoWindow(
+            title: "Моя локація",
+          ),
+        ));
       });
       getUserLocation();
       print('${position.latitude} / ${position.longitude}');
@@ -205,6 +199,55 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  double width = 65;
+  double height = 65;
+  double width1 = 65;
+  double height1 = 65;
+  double width2 = 65;
+  double height2 = 65;
+
+  animOn() {
+    setState(() {
+      width = 58;
+      height = 58;
+    });
+  }
+
+  animOff() {
+    setState(() {
+      width = 65;
+      height = 65;
+    });
+  }
+
+  animOn1() {
+    setState(() {
+      width1 = 58;
+      height1 = 58;
+    });
+  }
+
+  animOff1() {
+    setState(() {
+      width1 = 65;
+      height1 = 65;
+    });
+  }
+
+  animOn2() {
+    setState(() {
+      width2 = 58;
+      height2 = 58;
+    });
+  }
+
+  animOff2() {
+    setState(() {
+      width2 = 65;
+      height2 = 65;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -229,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
             zoom: 16,
           );
           return Scaffold(
-            backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+            backgroundColor: Color.fromRGBO(18, 18, 18, 1),
             floatingActionButton: Padding(
               padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
               child: Row(
@@ -237,13 +280,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      animOn();
+                      await Future.delayed(Duration(milliseconds: 107));
+                      animOff();
                       Get.to(() => Friends(), transition: Transition.downToUp);
                     },
                     borderRadius: BorderRadius.circular(17),
-                    child: Container(
-                      width: 58,
-                      height: 58,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 107),
+                      width: width,
+                      height: height,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.90),
@@ -260,6 +307,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Spacer(),
                   InkWell(
                     onTap: () async {
+                      animOn1();
+                      await Future.delayed(Duration(milliseconds: 107));
+                      animOff1();
+
                       final DocumentSnapshot<Map<String, dynamic>> snapshot =
                           await firestore
                               .collection('users')
@@ -276,9 +327,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {});
                     },
                     borderRadius: BorderRadius.circular(17),
-                    child: Container(
-                      width: 58,
-                      height: 58,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 107),
+                      width: width1,
+                      height: height1,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.90),
@@ -294,13 +346,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Spacer(),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      animOn2();
+                      await Future.delayed(Duration(milliseconds: 107));
+                      animOff2();
                       Get.to(() => Profile(), transition: Transition.downToUp);
                     },
                     borderRadius: BorderRadius.circular(17),
-                    child: Container(
-                      width: 58,
-                      height: 58,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 107),
+                      width: width2,
+                      height: height2,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.90),

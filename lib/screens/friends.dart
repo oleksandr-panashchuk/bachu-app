@@ -19,10 +19,27 @@ class _FriendsState extends State<Friends> {
       .collection('my_friends')
       .snapshots();
 
+  double width = 52;
+  double height = 52;
+
+  animOn() {
+    setState(() {
+      width = 45;
+      height = 45;
+    });
+  }
+
+  animOff() {
+    setState(() {
+      width = 52;
+      height = 52;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(3, 3, 3, 1),
+      backgroundColor: Color.fromRGBO(12, 12, 9, 1),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,14 +92,24 @@ class _FriendsState extends State<Friends> {
                 ),
                 Spacer(),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    animOn();
+                    await Future.delayed(Duration(milliseconds: 90));
+                    animOff();
                     Get.to(() => AddFriend(), transition: Transition.downToUp);
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 90),
                     alignment: Alignment.center,
-                    width: 52,
-                    height: 52,
+                    width: width,
+                    height: height,
                     decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 17,
+                              offset: Offset(-2, 2),
+                              color: Colors.yellow.withOpacity(0.25))
+                        ],
                         color: Colors.yellow,
                         borderRadius: BorderRadius.circular(15)),
                     child: Icon(Icons.add, color: Colors.black),
@@ -146,6 +173,45 @@ class _FriendsState extends State<Friends> {
                                 ],
                               ),
                               Spacer(),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .collection('my_friends')
+                                      .doc(data['email'])
+                                      .delete();
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(data['email'])
+                                      .collection('my_friends')
+                                      .doc(
+                                          '${FirebaseAuth.instance.currentUser!.email}')
+                                      .delete();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      color: Colors.yellow,
+                                      borderRadius: BorderRadius.circular(15),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            blurRadius: 12,
+                                            offset: Offset(-2, -3),
+                                            color:
+                                                Colors.yellow.withOpacity(0.21))
+                                      ]),
+                                  child:
+                                      Icon(Icons.message, color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 7,
+                              ),
                               InkWell(
                                 borderRadius: BorderRadius.circular(15),
                                 onTap: () async {
