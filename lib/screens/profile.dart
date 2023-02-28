@@ -1,7 +1,10 @@
+import 'package:bachu/screens/authScreens/buy_premium.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -22,14 +25,18 @@ class _ProfileState extends State<Profile> {
             .snapshots(),
         builder: (context, snapshots) {
           return (snapshots.connectionState == ConnectionState.waiting)
-              ? Center(child: CircularProgressIndicator(color: Colors.yellow))
+              ? Center(
+                  child: SpinKitThreeBounce(
+                  color: Colors.yellow,
+                  size: 21,
+                ))
               : ListView.builder(
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
                   itemCount: 1,
                   itemBuilder: (context, index) {
                     var data = snapshots.data!.data() as Map<String, dynamic>;
-                    bool premium = true;
+
                     return Column(
                       children: [
                         SizedBox(
@@ -92,7 +99,26 @@ class _ProfileState extends State<Profile> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              premium
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('${data['name'][0]}. ${data['surname']}',
+                                      style: TextStyle(
+                                          color: data['premium']
+                                              ? Color.fromRGBO(255, 139, 19, 1)
+                                              : Colors.white,
+                                          fontSize: 23.5)),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(data['email'],
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.45),
+                                          fontSize: 14)),
+                                ],
+                              ),
+                              Spacer(),
+                              data['premium']
                                   ? Stack(
                                       clipBehavior: Clip.none,
                                       alignment: Alignment.topCenter,
@@ -109,13 +135,13 @@ class _ProfileState extends State<Profile> {
                                                         255, 139, 19, 0.71))
                                               ],
                                               borderRadius:
-                                                  BorderRadius.circular(17)),
+                                                  BorderRadius.circular(21)),
                                           alignment: Alignment.center,
                                           child: Container(
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                                 borderRadius:
-                                                    BorderRadius.circular(17),
+                                                    BorderRadius.circular(21),
                                                 image: DecorationImage(
                                                     image: NetworkImage(
                                                         '${FirebaseAuth.instance.currentUser!.photoURL}'),
@@ -151,7 +177,7 @@ class _ProfileState extends State<Profile> {
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(17),
+                                              BorderRadius.circular(21),
                                           image: DecorationImage(
                                               image: NetworkImage(
                                                   '${FirebaseAuth.instance.currentUser!.photoURL}'),
@@ -159,30 +185,118 @@ class _ProfileState extends State<Profile> {
                                       width: 77,
                                       height: 77,
                                     ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('${data['name']}\n${data['surname']}',
-                                      style: TextStyle(
-                                          color: premium
-                                              ? Color.fromRGBO(255, 139, 19, 1)
-                                              : Colors.white,
-                                          fontSize: 22)),
-                                  SizedBox(
-                                    height: 7,
-                                  ),
-                                  Text(data['email'],
-                                      style: TextStyle(
-                                          color: Colors.white.withOpacity(0.45),
-                                          fontSize: 14))
-                                ],
-                              )
                             ],
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          height: 21,
+                        ),
+                        data['premium']
+                            ? Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 21, vertical: 5),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 21, vertical: 21),
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(17)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Статус:',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        )),
+                                    Spacer(),
+                                    Text('Преміум',
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromRGBO(255, 139, 59, 1),
+                                            fontSize: 21,
+                                            fontWeight: FontWeight.w500))
+                                  ],
+                                ),
+                              )
+                            : Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 21, vertical: 5),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 21, vertical: 21),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.12),
+                                        borderRadius:
+                                            BorderRadius.circular(17)),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Статус:',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                            )),
+                                        Spacer(),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text('Звичайний',
+                                                style: TextStyle(
+                                                    color: Colors.white
+                                                        .withOpacity(0.52),
+                                                    fontSize: 21,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      Get.to(() => BuyPremium(),
+                                          transition: Transition.downToUp);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(21),
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 21, vertical: 7),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromRGBO(255, 235, 59, 1),
+                                          borderRadius:
+                                              BorderRadius.circular(17),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                blurRadius: 12,
+                                                offset: Offset(-2, 3),
+                                                color: Colors.yellow
+                                                    .withOpacity(0.45))
+                                          ]),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.card_giftcard_sharp,
+                                              color: Colors.black),
+                                          SizedBox(
+                                            width: 7,
+                                          ),
+                                          Text('Придбати преміум',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                       ],
                     );
                   });

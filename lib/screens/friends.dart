@@ -2,6 +2,7 @@ import 'package:bachu/screens/add_friend.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class Friends extends StatefulWidget {
@@ -123,7 +124,10 @@ class _FriendsState extends State<Friends> {
             builder: (context, snapshots) {
               return (snapshots.connectionState == ConnectionState.waiting)
                   ? Center(
-                      child: CircularProgressIndicator(color: Colors.yellow))
+                      child: SpinKitThreeBounce(
+                      color: Colors.yellow,
+                      size: 21,
+                    ))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),

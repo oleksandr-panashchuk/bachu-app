@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData(fontFamily: 'e-Ukraine'),
+      theme: ThemeData(fontFamily: 'Unbounded'),
       debugShowCheckedModeBanner: false,
       title: 'Bachu',
       home: Scaffold(
