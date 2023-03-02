@@ -33,21 +33,18 @@ class _AddFriendState extends State<AddFriend> {
     return false;
   }
 
-  Future<DocumentSnapshot?> getObjectByValue(String searchObject) async {
-    final CollectionReference collectionReference =
-        FirebaseFirestore.instance.collection('users');
-    QuerySnapshot querySnapshot = await collectionReference.get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot documentSnapshot in querySnapshot.docs) {
-        final data = documentSnapshot.data();
-        if (data is Map && data.containsValue(searchObject)) {
-          return documentSnapshot;
-        }
-      }
+  Future<dynamic> getFieldBySearchValue(String collectionPath,
+      String searchField, dynamic value, String field) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection(collectionPath)
+        .where(searchField, isEqualTo: value)
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      final docData = snapshot.docs.first.data();
+      return docData[field];
+    } else {
+      return null;
     }
-
-    return null;
   }
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -256,7 +253,8 @@ class _AddFriendState extends State<AddFriend> {
                         reged = exists;
                       });
                       if (exists == true) {
-                        getObjectByValue(friend.text);
+                        final friendDoc = await getFieldBySearchValue(
+                            'users', 'username', friend.text, 'email');
                         CollectionReference sourceCollection =
                             FirebaseFirestore.instance.collection('users');
                         CollectionReference targetCollection =
@@ -264,7 +262,7 @@ class _AddFriendState extends State<AddFriend> {
                         DocumentReference sourceDoc = sourceCollection
                             .doc('${FirebaseAuth.instance.currentUser!.email}');
                         DocumentReference targetDoc = targetCollection
-                            .doc(friend.text)
+                            .doc(friendDoc)
                             .collection('friend_requests')
                             .doc('${FirebaseAuth.instance.currentUser!.email}');
                         DocumentSnapshot sourceSnapshot = await sourceDoc.get();
