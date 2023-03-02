@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
   String? mapTheme;
+  late Timer _timer;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   late StreamSubscription<Position> _positionStreamSubscription;
@@ -67,15 +68,25 @@ class _HomeScreenState extends State<HomeScreen> {
         .collection('my_friends');
     QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
 
+    CollectionReference secondSubSourceCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    QuerySnapshot secondSubQuerySnapshot =
+        await secondSubSourceCollection.get();
+
     for (var doc in subQuerySnapshot.docs) {
-      _markers.add(Marker(
-        markerId: MarkerId('my_location'),
-        position: LatLng(doc['latitude'], doc['longitude']),
-        infoWindow: InfoWindow(
-          title: "${doc['email']}",
-        ),
-      ));
-      print('${doc['email']} | ${doc['latitude']} ${doc['longitude']}');
+      for (var secondDoc in secondSubQuerySnapshot.docs) {
+        _markers.add(Marker(
+          markerId: MarkerId('${doc['email']}'),
+          position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
+          infoWindow: InfoWindow(
+            title: "${doc['email']}",
+          ),
+        ));
+        print(subQuerySnapshot.docs.length);
+        print(
+            '${doc['email']} | ${secondDoc['latitude']} ${secondDoc['longitude']}');
+      }
     }
   }
 
@@ -96,76 +107,85 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final batch = FirebaseFirestore.instance.batch();
 
-    documentsSnapshot.docs.forEach((doc) {
+    for (var doc in documentsSnapshot.docs) {
       final myFriendsDocRef =
           doc.reference.collection('my_friends').doc(currentUserEmail);
       batch.set(myFriendsDocRef, doc.data());
-    });
+    }
 
     await batch.commit();
   }
 
   @override
   void initState() {
-    countDocuments();
     super.initState();
-    getUsers();
-    _initialCameraPositionFuture = getInitialCameraPosition();
-    DefaultAssetBundle.of(context)
-        .loadString('assets/themes/map/map_theme.json')
-        .then((value) {
-      mapTheme = value;
-    });
-    _positionStreamSubscription =
-        Geolocator.getPositionStream().listen((position) async {
-      final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
-          .collection('users')
-          .doc('${FirebaseAuth.instance.currentUser!.email}')
-          .get();
-
-      final double latitude = snapshot.get('latitude');
-      final double longitude = snapshot.get('longitude');
-      setState(() {
-        // CollectionReference subSourceCollection = FirebaseFirestore.instance
-        //     .collection('users')
-        //     .doc('${FirebaseAuth.instance.currentUser!.email}')
-        //     .collection('my_friends');
-        // QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
-
-        // for (var doc in subQuerySnapshot.docs) {
-        //   _removeMarkersWithTitle("${doc['email']}");
-        //   _markers.add(Marker(
-        //     markerId: MarkerId('my_location'),
-        //     position: LatLng(doc['latitude'], doc['longitude']),
-        //     infoWindow: InfoWindow(
-        //       title: "${doc['email']}",
-        //     ),
-        //   ));
-        //   print('${doc['email']} | ${doc['latitude']} ${doc['longitude']}');
-        // }
-
-        firestore
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      countDocuments();
+      _initialCameraPositionFuture = getInitialCameraPosition();
+      DefaultAssetBundle.of(context)
+          .loadString('assets/themes/map/map_theme.json')
+          .then((value) {
+        mapTheme = value;
+      });
+      _positionStreamSubscription =
+          Geolocator.getPositionStream().listen((position) async {
+        final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
             .collection('users')
             .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .update({
-              'latitude': position.latitude,
-              'longitude': position.longitude,
-            })
-            .then((value) => print("Coords updated successfully"))
-            .catchError((error) => print("Failed to update coords: $error"));
-        _removeMarkersWithTitle("Моя локація");
-        _markers.add(Marker(
-          markerId: MarkerId('my_location'),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: "Моя локація",
-          ),
-        ));
+            .get();
+
+        final double latitude = snapshot.get('latitude');
+        final double longitude = snapshot.get('longitude');
+        CollectionReference subSourceCollection = FirebaseFirestore.instance
+            .collection('users')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('my_friends');
+        QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
+
+        CollectionReference secondSubSourceCollection =
+            FirebaseFirestore.instance.collection('users');
+
+        QuerySnapshot secondSubQuerySnapshot =
+            await secondSubSourceCollection.get();
+
+        setState(() {
+          firestore
+              .collection('users')
+              .doc('${FirebaseAuth.instance.currentUser!.email}')
+              .update({
+                'latitude': position.latitude,
+                'longitude': position.longitude,
+              })
+              .then((value) => print("Coords updated successfully"))
+              .catchError((error) => print("Failed to update coords: $error"));
+          // _removeMarkersWithTitle(
+          //     "${FirebaseAuth.instance.currentUser!.email}");
+          _markers.add(Marker(
+            markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
+            position: LatLng(latitude, longitude),
+            infoWindow: InfoWindow(
+              title: "${FirebaseAuth.instance.currentUser!.email}",
+            ),
+          ));
+
+          for (var doc in subQuerySnapshot.docs) {
+            for (var secondDoc in secondSubQuerySnapshot.docs) {
+              _removeMarkersWithTitle("${doc['email']}");
+              _markers.add(Marker(
+                markerId: MarkerId('${doc['email']}'),
+                position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
+                infoWindow: InfoWindow(
+                  title: "${doc['email']}",
+                ),
+              ));
+            }
+          }
+        });
+        getUserLocation();
+        getUsers();
+        print('${position.latitude} / ${position.longitude}');
       });
-      getUserLocation();
-      print('${position.latitude} / ${position.longitude}');
     });
-    shareLoc();
   }
 
   @override
