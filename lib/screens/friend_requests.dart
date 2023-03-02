@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class FriendRequests extends StatefulWidget {
   const FriendRequests({super.key});
@@ -83,7 +84,10 @@ class _FriendRequestsState extends State<FriendRequests> {
             builder: (context, snapshots) {
               return (snapshots.connectionState == ConnectionState.waiting)
                   ? Center(
-                      child: CircularProgressIndicator(color: Colors.yellow))
+                      child: SpinKitThreeBounce(
+                      color: Colors.yellow,
+                      size: 21,
+                    ))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -115,11 +119,23 @@ class _FriendRequestsState extends State<FriendRequests> {
                               SizedBox(
                                 width: 12,
                               ),
-                              Text('${data['name']}\n${data['surname']}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400)),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('${data['name'][0]}. ${data['surname']}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400)),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text('${data['friends'].toString()} друзів',
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.45),
+                                          fontSize: 14))
+                                ],
+                              ),
                               Spacer(),
                               InkWell(
                                 borderRadius: BorderRadius.circular(15),

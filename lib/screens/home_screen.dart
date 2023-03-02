@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:bachu/screens/friends.dart';
 import 'package:bachu/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -57,11 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getUsers() async {
-    String imageURL = 'https://ibb.co/RzzHDvD';
-    Uint8List bytes =
-        (await NetworkAssetBundle(Uri.parse(imageURL)).load(imageURL))
-            .buffer
-            .asUint8List();
     CollectionReference subSourceCollection = FirebaseFirestore.instance
         .collection('users')
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -94,26 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _markers.removeWhere((marker) => marker.infoWindow.title == title);
     });
-  }
-
-  shareLoc() async {
-    final userCollection = FirebaseFirestore.instance.collection('users');
-    final currentUserEmail = FirebaseAuth.instance.currentUser!.email;
-
-    // Отримання всіх документів з колекції users, що містять колекцію my_friends
-    final documentsSnapshot = await userCollection
-        .where('my_friends.$currentUserEmail', isEqualTo: true)
-        .get();
-
-    final batch = FirebaseFirestore.instance.batch();
-
-    for (var doc in documentsSnapshot.docs) {
-      final myFriendsDocRef =
-          doc.reference.collection('my_friends').doc(currentUserEmail);
-      batch.set(myFriendsDocRef, doc.data());
-    }
-
-    await batch.commit();
   }
 
   @override
@@ -268,6 +248,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  getMyLoc() async {
+    animOn1();
+    await Future.delayed(Duration(milliseconds: 107));
+    animOff1();
+
+    final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .get();
+    GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: LatLng(snapshot.get('latitude'), snapshot.get('longitude')),
+      zoom: 16,
+    )));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -275,7 +272,10 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitThreeBounce(
+                color: Colors.yellow,
+                size: 21,
+              ),
             );
           }
           if (snapshot.hasError) {
@@ -293,119 +293,84 @@ class _HomeScreenState extends State<HomeScreen> {
           );
           return Scaffold(
             backgroundColor: Color.fromRGBO(18, 18, 18, 1),
-            floatingActionButton: Padding(
-              padding: EdgeInsets.only(left: 75, right: 45, bottom: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      animOn();
-                      await Future.delayed(Duration(milliseconds: 107));
-                      animOff();
-                      Get.to(() => Friends(), transition: Transition.downToUp);
-                    },
-                    borderRadius: BorderRadius.circular(17),
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 107),
-                      width: width,
-                      height: height,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.90),
-                          borderRadius: BorderRadius.circular(17),
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 17,
-                                offset: Offset(-1, 2),
-                                color: Colors.yellow.withOpacity(0.07))
-                          ]),
-                      child: Icon(Icons.people_alt, color: Colors.yellow),
+            body: SafeArea(
+              child: Stack(alignment: Alignment.bottomCenter, children: [
+                GoogleMap(
+                  initialCameraPosition: initialCameraPosition,
+                  markers: Set<Marker>.of(_markers),
+                  mapType: MapType.normal,
+                  myLocationEnabled: false,
+                  compassEnabled: false,
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController controller) {
+                    controller.setMapStyle(mapTheme);
+                    _controller.complete(controller);
+                  },
+                ),
+                Stack(alignment: Alignment.topCenter, children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 52),
+                    margin: EdgeInsets.all(12),
+                    width: double.infinity,
+                    height: 77,
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        border:
+                            Border.all(color: Colors.white.withOpacity(0.07)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(35),
+                            topRight: Radius.circular(35),
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                            onTap: () {
+                              Get.to(() => Friends(),
+                                  transition: Transition.downToUp);
+                            },
+                            child: Icon(Icons.people, color: Colors.white)),
+                        Spacer(),
+                        GestureDetector(
+                            onTap: () {
+                              Get.to(() => Profile(),
+                                  transition: Transition.downToUp);
+                            },
+                            child: Icon(Icons.person, color: Colors.white))
+                      ],
                     ),
                   ),
-                  Spacer(),
-                  InkWell(
-                    onTap: () async {
-                      animOn1();
-                      await Future.delayed(Duration(milliseconds: 107));
-                      animOff1();
-
-                      final DocumentSnapshot<Map<String, dynamic>> snapshot =
-                          await firestore
-                              .collection('users')
-                              .doc(
-                                  '${FirebaseAuth.instance.currentUser!.email}')
-                              .get();
-                      GoogleMapController controller = await _controller.future;
-                      controller.animateCamera(
-                          CameraUpdate.newCameraPosition(CameraPosition(
-                        target: LatLng(snapshot.get('latitude'),
-                            snapshot.get('longitude')),
-                        zoom: 16,
-                      )));
-                      setState(() {});
+                  GestureDetector(
+                    onTap: () {
+                      getMyLoc();
                     },
-                    borderRadius: BorderRadius.circular(17),
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 107),
                       width: width1,
-                      height: height1,
+                      height: width1,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.90),
-                          borderRadius: BorderRadius.circular(17),
+                          gradient: LinearGradient(
+                              colors: [
+                                Color.fromRGBO(98, 14, 125, 1),
+                                Color.fromRGBO(195, 10, 154, 1)
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(150),
                           boxShadow: [
                             BoxShadow(
-                                blurRadius: 17,
-                                offset: Offset(-1, 2),
-                                color: Colors.yellow.withOpacity(0.07))
+                              blurRadius: 21,
+                              offset: Offset(0, 3),
+                              color: Color.fromRGBO(171, 14, 154, 0.52),
+                            )
                           ]),
-                      child: Icon(Icons.location_on, color: Colors.yellow),
+                      child: Icon(Icons.location_on,
+                          color: Colors.white, size: 30),
                     ),
                   ),
-                  Spacer(),
-                  InkWell(
-                    onTap: () async {
-                      animOn2();
-                      await Future.delayed(Duration(milliseconds: 107));
-                      animOff2();
-                      Get.to(() => Profile(), transition: Transition.downToUp);
-                    },
-                    borderRadius: BorderRadius.circular(17),
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 107),
-                      width: width2,
-                      height: height2,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.90),
-                          borderRadius: BorderRadius.circular(17),
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 17,
-                                offset: Offset(-1, 2),
-                                color: Colors.yellow.withOpacity(0.07))
-                          ]),
-                      child: Icon(Icons.person, color: Colors.yellow),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            body: SafeArea(
-              child: GoogleMap(
-                initialCameraPosition: initialCameraPosition,
-                markers: Set<Marker>.of(_markers),
-                mapType: MapType.normal,
-                myLocationEnabled: false,
-                compassEnabled: false,
-                zoomControlsEnabled: false,
-                onMapCreated: (GoogleMapController controller) {
-                  controller.setMapStyle(mapTheme);
-                  _controller.complete(controller);
-                },
-              ),
+                ])
+              ]),
             ),
           );
         });

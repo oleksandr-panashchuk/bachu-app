@@ -18,14 +18,33 @@ class _AddFriendState extends State<AddFriend> {
 
   bool accept = false;
 
-  Future<bool> checkIfDocumentExists(
-      String collectionName, String documentId) async {
-    final DocumentSnapshot document = await FirebaseFirestore.instance
-        .collection(collectionName)
-        .doc(documentId)
-        .get();
+  Future<bool> checkIfObjectExists(String searchObject) async {
+    final CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('users');
+    QuerySnapshot querySnapshot = await collectionReference.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      for (DocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        final data = documentSnapshot.data();
+        if (data is Map && data.containsValue(searchObject)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
-    return document.exists;
+  Future<dynamic> getFieldBySearchValue(String collectionPath,
+      String searchField, dynamic value, String field) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection(collectionPath)
+        .where(searchField, isEqualTo: value)
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      final docData = snapshot.docs.first.data();
+      return docData[field];
+    } else {
+      return null;
+    }
   }
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -54,6 +73,21 @@ class _AddFriendState extends State<AddFriend> {
           reqs = false;
         });
       }
+    });
+  }
+
+  int friends = 0;
+
+  void countFriends() async {
+    CollectionReference collectionReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('my_friends');
+
+    collectionReference.snapshots().listen((querySnapshot) {
+      setState(() {
+        friends = querySnapshot.size;
+      });
     });
   }
 
@@ -153,15 +187,21 @@ class _AddFriendState extends State<AddFriend> {
                       ),
                       reqs
                           ? Container(
-                              width: 21,
-                              height: 21,
+                              width: 17,
+                              height: 17,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                   color: Colors.red,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 12,
+                                        offset: Offset(-2, -2),
+                                        color: Colors.red.withOpacity(0.58))
+                                  ],
                                   borderRadius: BorderRadius.circular(150)),
                               child: Text(count.toString(),
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.transparent,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500)),
                             )
@@ -208,12 +248,13 @@ class _AddFriendState extends State<AddFriend> {
                       return;
                     }
                     if (friend.text.isNotEmpty) {
-                      bool exists =
-                          await checkIfDocumentExists('users', friend.text);
+                      bool exists = await checkIfObjectExists(friend.text);
                       setState(() {
                         reged = exists;
                       });
                       if (exists == true) {
+                        final friendDoc = await getFieldBySearchValue(
+                            'users', 'username', friend.text, 'email');
                         CollectionReference sourceCollection =
                             FirebaseFirestore.instance.collection('users');
                         CollectionReference targetCollection =
@@ -221,13 +262,15 @@ class _AddFriendState extends State<AddFriend> {
                         DocumentReference sourceDoc = sourceCollection
                             .doc('${FirebaseAuth.instance.currentUser!.email}');
                         DocumentReference targetDoc = targetCollection
-                            .doc(friend.text)
+                            .doc(friendDoc)
                             .collection('friend_requests')
                             .doc('${FirebaseAuth.instance.currentUser!.email}');
                         DocumentSnapshot sourceSnapshot = await sourceDoc.get();
                         Map<String, dynamic> sourceData =
                             sourceSnapshot.data() as Map<String, dynamic>;
                         await targetDoc.set(sourceData);
+                        countFriends();
+                        targetDoc.update({'friends': friends});
                         setState(() {
                           accept = true;
                         });

@@ -28,6 +28,11 @@ dependencies:
   flutter_polyline_points: ^1.0.0
   smooth_page_indicator:
   http:
+  flutter_spinkit:
+  rive:
+  flutter_foreground_task:
+  flutter_animated_dialog:
+  curved_navigation_bar:
 
 dev_dependencies:
   flutter_test:
@@ -56,3 +61,14 @@ flutter:
       - family: Keania
         fonts:
           - asset: assets/fonts/KeaniaOne-Regular.ttf
+      
+      - family: Unbounded
+        fonts:
+          - asset: assets/fonts/Unbounded-Regular.ttf
+            weight: 400
+          - asset: assets/fonts/Unbounded-Medium.ttf
+            weight: 500
+          - asset: assets/fonts/Unbounded-SemiBold.ttf
+            weight: 600
+          - asset: assets/fonts/Unbounded-Bold.ttf
+            weight: 700
