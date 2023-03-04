@@ -29,8 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
   String? mapTheme;
-  late Timer _timer;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   late StreamSubscription<Position> _positionStreamSubscription;
   late Future<Map<String, dynamic>> _initialCameraPositionFuture;
@@ -99,72 +97,67 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      countDocuments();
-      _initialCameraPositionFuture = getInitialCameraPosition();
-      DefaultAssetBundle.of(context)
-          .loadString('assets/themes/map/map_theme.json')
-          .then((value) {
-        mapTheme = value;
-      });
-      _positionStreamSubscription =
-          Geolocator.getPositionStream().listen((position) async {
-        final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
+    _initialCameraPositionFuture = getInitialCameraPosition();
+    countDocuments();
+    DefaultAssetBundle.of(context)
+        .loadString('assets/themes/map/map_theme.json')
+        .then((value) {
+      mapTheme = value;
+    });
+    _positionStreamSubscription =
+        Geolocator.getPositionStream().listen((position) async {
+      final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
+          .collection('users')
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .get();
+
+      final double latitude = snapshot.get('latitude');
+      final double longitude = snapshot.get('longitude');
+      CollectionReference subSourceCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .collection('my_friends');
+      QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
+
+      CollectionReference secondSubSourceCollection =
+          FirebaseFirestore.instance.collection('users');
+
+      QuerySnapshot secondSubQuerySnapshot =
+          await secondSubSourceCollection.get();
+
+      setState(() {
+        FirebaseFirestore.instance
             .collection('users')
             .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .get();
+            .update({
+              'latitude': position.latitude,
+              'longitude': position.longitude,
+            })
+            .then((value) => print("Coords updated successfully"))
+            .catchError((error) => print("Failed to update coords: $error"));
+        _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
+        _markers.add(Marker(
+          markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
+          position: LatLng(latitude, longitude),
+          infoWindow: InfoWindow(
+            title: "${FirebaseAuth.instance.currentUser!.email}",
+          ),
+        ));
 
-        final double latitude = snapshot.get('latitude');
-        final double longitude = snapshot.get('longitude');
-        CollectionReference subSourceCollection = FirebaseFirestore.instance
-            .collection('users')
-            .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .collection('my_friends');
-        QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
-
-        CollectionReference secondSubSourceCollection =
-            FirebaseFirestore.instance.collection('users');
-
-        QuerySnapshot secondSubQuerySnapshot =
-            await secondSubSourceCollection.get();
-
-        setState(() {
-          firestore
-              .collection('users')
-              .doc('${FirebaseAuth.instance.currentUser!.email}')
-              .update({
-                'latitude': position.latitude,
-                'longitude': position.longitude,
-              })
-              .then((value) => print("Coords updated successfully"))
-              .catchError((error) => print("Failed to update coords: $error"));
-          // _removeMarkersWithTitle(
-          //     "${FirebaseAuth.instance.currentUser!.email}");
-          _markers.add(Marker(
-            markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
-            position: LatLng(latitude, longitude),
-            infoWindow: InfoWindow(
-              title: "${FirebaseAuth.instance.currentUser!.email}",
-            ),
-          ));
-
-          for (var doc in subQuerySnapshot.docs) {
-            for (var secondDoc in secondSubQuerySnapshot.docs) {
-              _removeMarkersWithTitle("${doc['email']}");
-              _markers.add(Marker(
-                markerId: MarkerId('${doc['email']}'),
-                position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
-                infoWindow: InfoWindow(
-                  title: "${doc['email']}",
-                ),
-              ));
-            }
+        for (var doc in subQuerySnapshot.docs) {
+          for (var secondDoc in secondSubQuerySnapshot.docs) {
+            _removeMarkersWithTitle("${secondDoc['email']}");
+            _markers.add(Marker(
+              markerId: MarkerId('${secondDoc['email']}'),
+              position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
+              infoWindow: InfoWindow(
+                title: "${secondDoc['email']}",
+              ),
+            ));
           }
-        });
-        getUserLocation();
-        getUsers();
-        print('${position.latitude} / ${position.longitude}');
+        }
       });
+      print('${position.latitude} / ${position.longitude}');
     });
   }
 
