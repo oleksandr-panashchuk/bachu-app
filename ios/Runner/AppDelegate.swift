@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import GoogleMaps
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,7 +10,6 @@ import Flutter
   ) -> Bool {
     GMSServices.provideAPIKey("AIzaSyAEOVHzlJG5t-q29IuyhM3jK1Jwq58NRhE")
     GeneratedPluginRegistrant.register(with: self)
-    SwiftFlutterForegroundTaskPlugin.setPluginRegistrantCallback(registerPlugins)
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }

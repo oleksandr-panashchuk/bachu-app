@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>492486940955-c76qj6e0tbpe54feps7k9gtcvopp5gip.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.492486940955-c76qj6e0tbpe54feps7k9gtcvopp5gip</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>492486940955-jftk5so5gf76pu3lcetpb3iqiuo6rapm.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBKgrYqAJ7oT2i2BZu9JwEfp8qSekzNYmE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>492486940955</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.bachu</string>
+	<key>PROJECT_ID</key>
+	<string>bacho-be1ff</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bacho-be1ff.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:492486940955:ios:1b6210dfe4c04c09b75bbe</string>
+	<key>DATABASE_URL</key>
+	<string>https://bacho-be1ff-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

@@ -230,7 +230,7 @@ class _AuthDetailsState extends State<AuthDetails> {
                                 border: Border.all(
                                     color: Colors.white.withOpacity(0.05))),
                             child: Icon(Icons.arrow_back_sharp,
-                                color: Colors.yellow),
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -392,10 +392,10 @@ class _AuthDetailsState extends State<AuthDetails> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                                 color: Colors.transparent,
-                                border: Border.all(color: Colors.yellow),
+                                border: Border.all(color: Colors.white),
                                 borderRadius: BorderRadius.circular(15)),
                             child: Icon(Icons.arrow_back_sharp,
-                                color: Colors.yellow),
+                                color: Colors.white),
                           ),
                         ),
                       ),
