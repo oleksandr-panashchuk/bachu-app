@@ -47,6 +47,17 @@ class _AddFriendState extends State<AddFriend> {
     }
   }
 
+  Future<bool> checkIfUsernameExists(String username) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get(); // Отримання всіх документів з колекції, у яких поле username містить значення 'john_doe'
+
+    List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+    return documents.isNotEmpty;
+  }
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   bool reqs = false;
@@ -228,7 +239,7 @@ class _AddFriendState extends State<AddFriend> {
                     controller: friend,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     decoration: InputDecoration(
-                        hintText: 'E-mail друга',
+                        hintText: 'Нік друга',
                         hintStyle: TextStyle(
                             color: Colors.white.withOpacity(0.21),
                             fontSize: 16),
@@ -248,7 +259,7 @@ class _AddFriendState extends State<AddFriend> {
                       return;
                     }
                     if (friend.text.isNotEmpty) {
-                      bool exists = await checkIfObjectExists(friend.text);
+                      bool exists = await checkIfUsernameExists(friend.text);
                       setState(() {
                         reged = exists;
                       });

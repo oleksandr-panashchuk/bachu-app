@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bachu/screens/authScreens/ban.dart';
@@ -5,6 +6,7 @@ import 'package:bachu/screens/authScreens/congrats.dart';
 import 'package:bachu/screens/firebase_services.dart';
 import 'package:bachu/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +80,7 @@ class _AuthDetailsState extends State<AuthDetails> {
 
   @override
   void initState() {
+    getPlatform();
     boolsCheck();
     super.initState();
   }
@@ -94,6 +97,27 @@ class _AuthDetailsState extends State<AuthDetails> {
     setState(() {
       padding = 21;
     });
+  }
+
+  Future<String> getPlatformName() async {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
+      return 'Android';
+    } else {
+      final IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
+      return 'iOS';
+    }
+  }
+
+  getPlatform() async {
+    final platform = await getPlatformName();
+    if (platform == 'Android') {
+      batteryCheck = true;
+    }
+    if (platform == 'iOS') {
+      batteryCheck = false;
+    }
   }
 
   @override
