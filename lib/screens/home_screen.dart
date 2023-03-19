@@ -148,6 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
           for (var secondDoc in secondSubQuerySnapshot.docs) {
             _removeMarkersWithTitle("${secondDoc['email']}");
             _markers.add(Marker(
+              onTap: () {
+                print('Marker');
+              },
               markerId: MarkerId('${secondDoc['email']}'),
               position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
               infoWindow: InfoWindow(
@@ -286,84 +289,100 @@ class _HomeScreenState extends State<HomeScreen> {
           );
           return Scaffold(
             backgroundColor: Color.fromRGBO(18, 18, 18, 1),
-            body: SafeArea(
-              child: Stack(alignment: Alignment.bottomCenter, children: [
-                GoogleMap(
-                  initialCameraPosition: initialCameraPosition,
-                  markers: Set<Marker>.of(_markers),
-                  mapType: MapType.normal,
-                  myLocationEnabled: false,
-                  compassEnabled: false,
-                  zoomControlsEnabled: false,
-                  onMapCreated: (GoogleMapController controller) {
-                    controller.setMapStyle(mapTheme);
-                    _controller.complete(controller);
-                  },
-                ),
-                Stack(alignment: Alignment.topCenter, children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 52),
-                    margin: EdgeInsets.all(12),
-                    width: double.infinity,
-                    height: 77,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        border:
-                            Border.all(color: Colors.white.withOpacity(0.07)),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(35),
-                            topRight: Radius.circular(35),
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Get.to(() => Friends(),
-                                  transition: Transition.downToUp);
-                            },
-                            child: Icon(Icons.people, color: Colors.white)),
-                        Spacer(),
-                        GestureDetector(
-                            onTap: () {
-                              Get.to(() => Profile(),
-                                  transition: Transition.downToUp);
-                            },
-                            child: Icon(Icons.person, color: Colors.white))
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      getMyLoc();
+            body: WillStartForegroundTask(
+              onWillStart: () {
+                getUsers();
+                return true;
+              },
+              notificationOptions: NotificationOptions(
+                channelId: 'notification_channel_id',
+                channelName: 'Foreground Notification',
+                channelDescription:
+                    'This notification appears when the foreground service is running.',
+                channelImportance: NotificationChannelImportance.LOW,
+                priority: NotificationPriority.LOW,
+              ),
+              notificationTitle: 'Bachu is running in foreground.',
+              notificationText: 'Tap to return to the app.',
+              child: SafeArea(
+                child: Stack(alignment: Alignment.bottomCenter, children: [
+                  GoogleMap(
+                    initialCameraPosition: initialCameraPosition,
+                    markers: Set<Marker>.of(_markers),
+                    mapType: MapType.normal,
+                    myLocationEnabled: false,
+                    compassEnabled: false,
+                    zoomControlsEnabled: false,
+                    onMapCreated: (GoogleMapController controller) {
+                      controller.setMapStyle(mapTheme);
+                      _controller.complete(controller);
                     },
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 107),
-                      width: width1,
-                      height: width1,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [
-                                Color.fromRGBO(98, 14, 125, 1),
-                                Color.fromRGBO(195, 10, 154, 1)
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
-                          borderRadius: BorderRadius.circular(150),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 21,
-                              offset: Offset(0, 3),
-                              color: Color.fromRGBO(171, 14, 154, 0.52),
-                            )
-                          ]),
-                      child: Icon(Icons.location_on,
-                          color: Colors.white, size: 30),
-                    ),
                   ),
-                ])
-              ]),
+                  Stack(alignment: Alignment.topCenter, children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 52),
+                      margin: EdgeInsets.all(12),
+                      width: double.infinity,
+                      height: 77,
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.07)),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(35),
+                              topRight: Radius.circular(35),
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15))),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                Get.to(() => Friends(),
+                                    transition: Transition.downToUp);
+                              },
+                              child: Icon(Icons.people, color: Colors.white)),
+                          Spacer(),
+                          GestureDetector(
+                              onTap: () {
+                                Get.to(() => Profile(),
+                                    transition: Transition.downToUp);
+                              },
+                              child: Icon(Icons.person, color: Colors.white))
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        getMyLoc();
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 107),
+                        width: width1,
+                        height: width1,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Color.fromRGBO(98, 14, 125, 1),
+                                  Color.fromRGBO(195, 10, 154, 1)
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter),
+                            borderRadius: BorderRadius.circular(150),
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 21,
+                                offset: Offset(0, 3),
+                                color: Color.fromRGBO(171, 14, 154, 0.52),
+                              )
+                            ]),
+                        child: Icon(Icons.location_on,
+                            color: Colors.white, size: 30),
+                      ),
+                    ),
+                  ])
+                ]),
+              ),
             ),
           );
         });

@@ -126,7 +126,7 @@ class _FriendsState extends State<Friends> {
               return (snapshots.connectionState == ConnectionState.waiting)
                   ? Center(
                       child: SpinKitThreeBounce(
-                      color: Colors.yellow,
+                      color: Color.fromRGBO(195, 10, 154, 1),
                       size: 21,
                     ))
                   : ListView.builder(
@@ -201,17 +201,17 @@ class _FriendsState extends State<Friends> {
                                   width: 48,
                                   height: 48,
                                   decoration: BoxDecoration(
-                                      color: Colors.yellow,
+                                      color: Color.fromRGBO(195, 10, 154, 1),
                                       borderRadius: BorderRadius.circular(15),
                                       boxShadow: [
                                         BoxShadow(
                                             blurRadius: 12,
                                             offset: Offset(-2, -3),
                                             color:
-                                                Colors.yellow.withOpacity(0.21))
+                                                Color.fromRGBO(195, 10, 154, 1))
                                       ]),
                                   child:
-                                      Icon(Icons.message, color: Colors.black),
+                                      Icon(Icons.message, color: Colors.white),
                                 ),
                               ),
                               SizedBox(
@@ -242,9 +242,11 @@ class _FriendsState extends State<Friends> {
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(color: Colors.yellow)),
+                                      border: Border.all(
+                                          color:
+                                              Color.fromRGBO(195, 10, 154, 1))),
                                   child: Icon(Icons.cancel_outlined,
-                                      color: Colors.yellow),
+                                      color: Color.fromRGBO(195, 10, 154, 1)),
                                 ),
                               ),
                             ],
