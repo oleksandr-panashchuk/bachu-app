@@ -145,9 +145,10 @@ class _AddFriendState extends State<AddFriend> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     color: Colors.transparent,
-                    border: Border.all(color: Colors.yellow),
+                    border: Border.all(color: Color.fromRGBO(195, 10, 154, 1)),
                     borderRadius: BorderRadius.circular(15)),
-                child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+                child: Icon(Icons.arrow_back_sharp,
+                    color: Color.fromRGBO(195, 10, 154, 1)),
               ),
             ),
           ),
@@ -193,8 +194,10 @@ class _AddFriendState extends State<AddFriend> {
                         decoration: BoxDecoration(
                             color: Colors.transparent,
                             borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.yellow)),
-                        child: Icon(Icons.people, color: Colors.yellow),
+                            border: Border.all(
+                                color: Color.fromRGBO(195, 10, 154, 1))),
+                        child: Icon(Icons.people,
+                            color: Color.fromRGBO(195, 10, 154, 1)),
                       ),
                       reqs
                           ? Container(
@@ -300,11 +303,11 @@ class _AddFriendState extends State<AddFriend> {
                           BoxShadow(
                               blurRadius: 17,
                               offset: Offset(-2, 2),
-                              color: Colors.yellow.withOpacity(0.25))
+                              color: Color.fromRGBO(195, 10, 154, 1))
                         ],
-                        color: Colors.yellow,
+                        color: Color.fromRGBO(195, 10, 154, 1),
                         borderRadius: BorderRadius.circular(15)),
-                    child: Icon(Icons.add, color: Colors.black),
+                    child: Icon(Icons.add, color: Colors.white),
                   ),
                 )
               ],

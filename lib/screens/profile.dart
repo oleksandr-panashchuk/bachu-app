@@ -27,7 +27,7 @@ class _ProfileState extends State<Profile> {
           return (snapshots.connectionState == ConnectionState.waiting)
               ? Center(
                   child: SpinKitThreeBounce(
-                  color: Colors.yellow,
+                  color: Color.fromRGBO(195, 10, 154, 1),
                   size: 21,
                 ))
               : ListView.builder(
@@ -57,10 +57,12 @@ class _ProfileState extends State<Profile> {
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
-                                      border: Border.all(color: Colors.yellow),
+                                      border: Border.all(
+                                          color:
+                                              Color.fromRGBO(195, 10, 154, 1)),
                                       borderRadius: BorderRadius.circular(15)),
                                   child: Icon(Icons.arrow_back_sharp,
-                                      color: Colors.yellow),
+                                      color: Color.fromRGBO(195, 10, 154, 1)),
                                 ),
                               ),
                             ),
@@ -82,10 +84,12 @@ class _ProfileState extends State<Profile> {
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
-                                      border: Border.all(color: Colors.yellow),
+                                      border: Border.all(
+                                          color:
+                                              Color.fromRGBO(195, 10, 154, 1)),
                                       borderRadius: BorderRadius.circular(15)),
                                   child: Icon(Icons.settings,
-                                      color: Colors.yellow),
+                                      color: Color.fromRGBO(195, 10, 154, 1)),
                                 ),
                               ),
                             ),
@@ -267,28 +271,28 @@ class _ProfileState extends State<Profile> {
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                           color:
-                                              Color.fromRGBO(255, 235, 59, 1),
+                                              Color.fromRGBO(195, 10, 154, 1),
                                           borderRadius:
                                               BorderRadius.circular(17),
                                           boxShadow: [
                                             BoxShadow(
                                                 blurRadius: 12,
                                                 offset: Offset(-2, 3),
-                                                color: Colors.yellow
-                                                    .withOpacity(0.45))
+                                                color: Color.fromRGBO(
+                                                    195, 10, 154, 1))
                                           ]),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Icon(Icons.card_giftcard_sharp,
-                                              color: Colors.black),
+                                              color: Colors.white),
                                           SizedBox(
                                             width: 7,
                                           ),
                                           Text('Придбати преміум',
                                               style: TextStyle(
-                                                  color: Colors.black,
+                                                  color: Colors.white,
                                                   fontSize: 17,
                                                   fontWeight: FontWeight.w500))
                                         ],

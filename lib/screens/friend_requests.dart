@@ -42,9 +42,11 @@ class _FriendRequestsState extends State<FriendRequests> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         color: Colors.transparent,
-                        border: Border.all(color: Colors.yellow),
+                        border:
+                            Border.all(color: Color.fromRGBO(195, 10, 154, 1)),
                         borderRadius: BorderRadius.circular(15)),
-                    child: Icon(Icons.arrow_back_sharp, color: Colors.yellow),
+                    child: Icon(Icons.arrow_back_sharp,
+                        color: Color.fromRGBO(195, 10, 154, 1)),
                   ),
                 ),
               ),
@@ -155,9 +157,11 @@ class _FriendRequestsState extends State<FriendRequests> {
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(color: Colors.yellow)),
+                                      border: Border.all(
+                                          color:
+                                              Color.fromRGBO(195, 10, 154, 1))),
                                   child: Icon(Icons.cancel_outlined,
-                                      color: Colors.yellow),
+                                      color: Color.fromRGBO(195, 10, 154, 1)),
                                 ),
                               ),
                               SizedBox(
