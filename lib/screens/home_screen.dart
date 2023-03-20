@@ -114,46 +114,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
       QuerySnapshot secondSubQuerySnapshot =
           await secondSubSourceCollection.get();
-      const url =
-          'https://lh3.googleusercontent.com/a/AGNmyxa5GDhSikXVgIkqglvGBR8T2s2EhGXSXXevdzo1=s96-c';
+      final url = '${FirebaseAuth.instance.currentUser!.photoURL}';
       final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
-      setState(() {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .update({
-              'latitude': position.latitude,
-              'longitude': position.longitude,
-            })
-            .then((value) => print("Coords updated successfully"))
-            .catchError((error) => print("Failed to update coords: $error"));
-        _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
-        _markers.add(Marker(
-          onTap: () {
-            print('Marker');
-          },
-          markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: "${FirebaseAuth.instance.currentUser!.email}",
-          ),
-          icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
-        ));
 
-        for (var doc in subQuerySnapshot.docs) {
-          for (var secondDoc in secondSubQuerySnapshot.docs) {
-            _removeMarkersWithTitle("${secondDoc['email']}");
-            _markers.add(Marker(
-              onTap: () {},
-              markerId: MarkerId('${secondDoc['email']}'),
-              position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
-              infoWindow: InfoWindow(
-                title: "${secondDoc['email']}",
-              ),
-            ));
-          }
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .update({
+            'latitude': position.latitude,
+            'longitude': position.longitude,
+          })
+          .then((value) => print("Coords updated successfully"))
+          .catchError((error) => print("Failed to update coords: $error"));
+      _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
+      _markers.add(Marker(
+        onTap: () {
+          print('Marker');
+        },
+        markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
+        position: LatLng(latitude, longitude),
+        infoWindow: InfoWindow(
+          title: "${FirebaseAuth.instance.currentUser!.email}",
+        ),
+        icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
+      ));
+
+      for (var doc in subQuerySnapshot.docs) {
+        for (var secondDoc in secondSubQuerySnapshot.docs) {
+          final url = secondDoc['photo'];
+          final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
+          _removeMarkersWithTitle("${secondDoc['email']}");
+          _markers.add(Marker(
+            onTap: () {},
+            markerId: MarkerId('${secondDoc['email']}'),
+            position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
+            infoWindow: InfoWindow(
+              title: "${secondDoc['email']}",
+            ),
+            icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
+          ));
         }
-      });
+      }
+
       print('${position.latitude} / ${position.longitude}');
     });
   }
@@ -265,7 +267,6 @@ class _HomeScreenState extends State<HomeScreen> {
       target: LatLng(snapshot.get('latitude'), snapshot.get('longitude')),
       zoom: 16,
     )));
-    setState(() {});
   }
 
   @override
