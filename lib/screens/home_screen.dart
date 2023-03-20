@@ -94,16 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initialCameraPositionFuture = getInitialCameraPosition();
-    countDocuments();
-    DefaultAssetBundle.of(context)
-        .loadString('assets/themes/map/map_theme.json')
-        .then((value) {
-      mapTheme = value;
-    });
+  shareLoc() {
     _positionStreamSubscription =
         Geolocator.getPositionStream().listen((position) async {
       final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
@@ -148,9 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
           for (var secondDoc in secondSubQuerySnapshot.docs) {
             _removeMarkersWithTitle("${secondDoc['email']}");
             _markers.add(Marker(
-              onTap: () {
-                print('Marker');
-              },
+              onTap: () {},
               markerId: MarkerId('${secondDoc['email']}'),
               position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
               infoWindow: InfoWindow(
@@ -162,6 +151,19 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       print('${position.latitude} / ${position.longitude}');
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initialCameraPositionFuture = getInitialCameraPosition();
+    countDocuments();
+    DefaultAssetBundle.of(context)
+        .loadString('assets/themes/map/map_theme.json')
+        .then((value) {
+      mapTheme = value;
+    });
+    shareLoc();
   }
 
   @override
@@ -290,17 +292,36 @@ class _HomeScreenState extends State<HomeScreen> {
           return Scaffold(
             backgroundColor: Color.fromRGBO(18, 18, 18, 1),
             body: WillStartForegroundTask(
-              onWillStart: () {
-                getUsers();
+              onWillStart: () async {
+                shareLoc();
                 return true;
               },
-              notificationOptions: NotificationOptions(
+              androidNotificationOptions: AndroidNotificationOptions(
                 channelId: 'notification_channel_id',
                 channelName: 'Foreground Notification',
                 channelDescription:
                     'This notification appears when the foreground service is running.',
                 channelImportance: NotificationChannelImportance.LOW,
                 priority: NotificationPriority.LOW,
+                iconData: const NotificationIconData(
+                  resType: ResourceType.mipmap,
+                  resPrefix: ResourcePrefix.ic,
+                  name: 'launcher',
+                ),
+                buttons: [
+                  const NotificationButton(id: 'sendButton', text: 'Send'),
+                  const NotificationButton(id: 'testButton', text: 'Test'),
+                ],
+              ),
+              iosNotificationOptions: const IOSNotificationOptions(
+                showNotification: true,
+                playSound: false,
+              ),
+              foregroundTaskOptions: const ForegroundTaskOptions(
+                isOnceEvent: false,
+                autoRunOnBoot: true,
+                allowWakeLock: true,
+                allowWifiLock: true,
               ),
               notificationTitle: 'Bachu is running in foreground.',
               notificationText: 'Tap to return to the app.',

@@ -31,7 +31,7 @@ dependencies:
   http:
   flutter_spinkit:
   rive:
-  flutter_foreground_task:
+  flutter_foreground_task: ^4.1.0
   flutter_animated_dialog:
   curved_navigation_bar:
   device_info:
