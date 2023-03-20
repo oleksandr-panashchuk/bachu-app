@@ -24,10 +24,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
-
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
+  late BitmapDescriptor _markerIcon;
   String? mapTheme;
 
   late StreamSubscription<Position> _positionStreamSubscription;
@@ -124,7 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       QuerySnapshot secondSubQuerySnapshot =
           await secondSubSourceCollection.get();
-
+      const url =
+          'https://lh3.googleusercontent.com/a/AGNmyxa5GDhSikXVgIkqglvGBR8T2s2EhGXSXXevdzo1=s96-c';
+      final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
       setState(() {
         FirebaseFirestore.instance
             .collection('users')
@@ -137,11 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
             .catchError((error) => print("Failed to update coords: $error"));
         _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
         _markers.add(Marker(
+          onTap: () {
+            print('Marker');
+          },
           markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
           position: LatLng(latitude, longitude),
           infoWindow: InfoWindow(
             title: "${FirebaseAuth.instance.currentUser!.email}",
           ),
+          icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
         ));
 
         for (var doc in subQuerySnapshot.docs) {
