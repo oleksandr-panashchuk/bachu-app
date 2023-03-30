@@ -69,16 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initialCameraPositionFuture = getInitialCameraPosition();
-    countDocuments();
-    DefaultAssetBundle.of(context)
-        .loadString('assets/themes/map/map_theme.json')
-        .then((value) {
-      mapTheme = value;
-    });
+  shareLoc() {
     _positionStreamSubscription =
         Geolocator.getPositionStream().listen((position) async {
       final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
@@ -100,48 +91,58 @@ class _HomeScreenState extends State<HomeScreen> {
       QuerySnapshot secondSubQuerySnapshot =
           await secondSubSourceCollection.get();
       final url = '${FirebaseAuth.instance.currentUser!.photoURL}';
-      final myImage = await NetworkAssetBundle(Uri.parse(url)).load('');
-      setState(() {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .update({
-              'latitude': position.latitude,
-              'longitude': position.longitude,
-            })
-            .then((value) => log("Coords updated successfully"))
-            .catchError((error) => log("Failed to update coords: $error"));
-        _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
-        _markers.add(Marker(
-          onTap: () {
-            log('Tapped');
-          },
-          markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: "${FirebaseAuth.instance.currentUser!.email}",
-          ),
-          icon: BitmapDescriptor.fromBytes(myImage.buffer.asUint8List()),
-        ));
+      final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
 
-        for (var doc in subQuerySnapshot.docs) {
-          for (var secondDoc in secondSubQuerySnapshot.docs) {
-            _removeMarkersWithTitle("${secondDoc['email']}");
-            _markers.add(Marker(
-              onTap: () {
-                log('Tapped');
-              },
-              markerId: MarkerId('${secondDoc['email']}'),
-              position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
-              infoWindow: InfoWindow(
-                title: "${secondDoc['email']}",
-              ),
-            ));
-          }
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .update({
+            'latitude': position.latitude,
+            'longitude': position.longitude,
+          })
+          .then((value) => print("Coords updated successfully"))
+          .catchError((error) => print("Failed to update coords: $error"));
+      _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
+      _markers.add(Marker(
+        onTap: () {
+          print('Marker');
+        },
+        markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
+        position: LatLng(latitude, longitude),
+        icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
+      ));
+
+      for (var doc in subQuerySnapshot.docs) {
+        for (var secondDoc in secondSubQuerySnapshot.docs) {
+          final url = secondDoc['photo'];
+          final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
+          _removeMarkersWithTitle("${secondDoc['email']}");
+          _markers.add(Marker(
+            onTap: () {
+              print(secondDoc['email']);
+            },
+            markerId: MarkerId('${secondDoc['email']}'),
+            position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
+            icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
+          ));
         }
-      });
-      log('${position.latitude} / ${position.longitude}');
+      }
+
+      print('${position.latitude} / ${position.longitude}');
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initialCameraPositionFuture = getInitialCameraPosition();
+    countDocuments();
+    DefaultAssetBundle.of(context)
+        .loadString('assets/themes/map/map_theme.json')
+        .then((value) {
+      mapTheme = value;
+    });
+    shareLoc();
   }
 
   @override
@@ -237,7 +238,6 @@ class _HomeScreenState extends State<HomeScreen> {
       target: LatLng(snapshot.get('latitude'), snapshot.get('longitude')),
       zoom: 16,
     )));
-    setState(() {});
   }
 
   @override
@@ -266,26 +266,45 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             zoom: 16,
           );
-          return Scaffold(
-            backgroundColor: Color.fromRGBO(18, 18, 18, 1),
-            body: WillStartForegroundTask(
-              onWillStart: () {
-                getUsers();
-                return true;
-              },
-              notificationOptions: NotificationOptions(
-                channelId: 'notification_channel_id',
-                channelName: 'Foreground Notification',
-                channelDescription:
-                    'This notification appears when the foreground service is running.',
-                channelImportance: NotificationChannelImportance.LOW,
-                priority: NotificationPriority.LOW,
-              ),
-              notificationTitle: 'Bachu is running in foreground.',
-              notificationText: 'Tap to return to the app.',
-              child: SafeArea(
-                child: Stack(alignment: Alignment.bottomCenter, children: [
-                  GoogleMap(
+          return Stack(alignment: Alignment.bottomCenter, children: [
+            Scaffold(
+              backgroundColor: Color.fromRGBO(18, 18, 18, 1),
+              body: WillStartForegroundTask(
+                onWillStart: () async {
+                  shareLoc();
+                  return true;
+                },
+                androidNotificationOptions: AndroidNotificationOptions(
+                  channelId: 'notification_channel_id',
+                  channelName: 'Foreground Notification',
+                  channelDescription:
+                      'This notification appears when the foreground service is running.',
+                  channelImportance: NotificationChannelImportance.LOW,
+                  priority: NotificationPriority.LOW,
+                  iconData: const NotificationIconData(
+                    resType: ResourceType.mipmap,
+                    resPrefix: ResourcePrefix.ic,
+                    name: 'launcher',
+                  ),
+                  buttons: [
+                    const NotificationButton(id: 'sendButton', text: 'Send'),
+                    const NotificationButton(id: 'testButton', text: 'Test'),
+                  ],
+                ),
+                iosNotificationOptions: const IOSNotificationOptions(
+                  showNotification: true,
+                  playSound: false,
+                ),
+                foregroundTaskOptions: const ForegroundTaskOptions(
+                  isOnceEvent: false,
+                  autoRunOnBoot: true,
+                  allowWakeLock: true,
+                  allowWifiLock: true,
+                ),
+                notificationTitle: 'Bachu is running in foreground.',
+                notificationText: 'Tap to return to the app.',
+                child: SafeArea(
+                  child: GoogleMap(
                     initialCameraPosition: initialCameraPosition,
                     markers: Set<Marker>.of(_markers),
                     mapType: MapType.normal,
@@ -297,73 +316,75 @@ class _HomeScreenState extends State<HomeScreen> {
                       _controller.complete(controller);
                     },
                   ),
-                  Stack(alignment: Alignment.topCenter, children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 52),
-                      margin: EdgeInsets.all(12),
-                      width: double.infinity,
-                      height: 77,
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          border:
-                              Border.all(color: Colors.white.withOpacity(0.07)),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(35),
-                              topRight: Radius.circular(35),
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15))),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                Get.to(() => Friends(),
-                                    transition: Transition.downToUp);
-                              },
-                              child: Icon(Icons.people, color: Colors.white)),
-                          Spacer(),
-                          GestureDetector(
-                              onTap: () {
-                                Get.to(() => Profile(),
-                                    transition: Transition.downToUp);
-                              },
-                              child: Icon(Icons.person, color: Colors.white))
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        getMyLoc();
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 107),
-                        width: width1,
-                        height: width1,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                                  Color.fromRGBO(98, 14, 125, 1),
-                                  Color.fromRGBO(195, 10, 154, 1)
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter),
-                            borderRadius: BorderRadius.circular(150),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 21,
-                                offset: Offset(0, 3),
-                                color: Color.fromRGBO(171, 14, 154, 0.52),
-                              )
-                            ]),
-                        child: Icon(Icons.location_on,
-                            color: Colors.white, size: 30),
-                      ),
-                    ),
-                  ])
-                ]),
+                ),
               ),
             ),
-          );
+            Padding(
+              padding: EdgeInsets.only(bottom: 45),
+              child: Stack(alignment: Alignment.topCenter, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 52),
+                  margin: EdgeInsets.all(12),
+                  width: double.infinity,
+                  height: 77,
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      border: Border.all(color: Colors.white.withOpacity(0.07)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(35),
+                          topRight: Radius.circular(35),
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15))),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            Get.to(() => Friends(),
+                                transition: Transition.downToUp);
+                          },
+                          child: Icon(Icons.people, color: Colors.white)),
+                      Spacer(),
+                      GestureDetector(
+                          onTap: () {
+                            Get.to(() => Profile(),
+                                transition: Transition.downToUp);
+                          },
+                          child: Icon(Icons.person, color: Colors.white))
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    getMyLoc();
+                  },
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 107),
+                    width: width1,
+                    height: width1,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: [
+                              Color.fromRGBO(98, 14, 125, 1),
+                              Color.fromRGBO(195, 10, 154, 1)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        borderRadius: BorderRadius.circular(150),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 21,
+                            offset: Offset(0, 3),
+                            color: Color.fromRGBO(171, 14, 154, 0.52),
+                          )
+                        ]),
+                    child:
+                        Icon(Icons.location_on, color: Colors.white, size: 30),
+                  ),
+                ),
+              ]),
+            ),
+          ]);
         });
   }
 }
