@@ -1,10 +1,12 @@
 import 'package:bachu/screens/authScreens/buy_premium.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -141,18 +143,30 @@ class _ProfileState extends State<Profile> {
                                               borderRadius:
                                                   BorderRadius.circular(21)),
                                           alignment: Alignment.center,
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(21),
-                                                image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        '${FirebaseAuth.instance.currentUser!.photoURL}'),
-                                                    fit: BoxFit.cover)),
-                                            width: 77,
-                                            height: 77,
-                                          ),
+                                          child: Stack(
+                                              clipBehavior: Clip.none,
+                                              alignment: Alignment.topRight,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () async {},
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(21),
+                                                        image: DecorationImage(
+                                                            image: NetworkImage(
+                                                                data['photo']),
+                                                            fit: BoxFit.cover)),
+                                                    width: 77,
+                                                    height: 77,
+                                                  ),
+                                                ),
+                                                Icon(Icons.camera_alt,
+                                                    color: Colors.white,
+                                                    size: 21),
+                                              ]),
                                         ),
                                         Positioned(
                                           bottom: 65,
@@ -177,17 +191,27 @@ class _ProfileState extends State<Profile> {
                                         )
                                       ],
                                     )
-                                  : Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(21),
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  '${FirebaseAuth.instance.currentUser!.photoURL}'),
-                                              fit: BoxFit.cover)),
-                                      width: 77,
-                                      height: 77,
+                                  : GestureDetector(
+                                      onTap: () {},
+                                      child: Stack(
+                                          clipBehavior: Clip.none,
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(21),
+                                                  image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          data['photo']),
+                                                      fit: BoxFit.cover)),
+                                              width: 77,
+                                              height: 77,
+                                            ),
+                                            Icon(Icons.camera_alt,
+                                                color: Colors.white, size: 21),
+                                          ]),
                                     ),
                             ],
                           ),
