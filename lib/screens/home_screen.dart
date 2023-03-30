@@ -1,20 +1,16 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:developer';
 import 'package:bachu/screens/friends.dart';
 import 'package:bachu/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final Geolocator geolocator = Geolocator();
   final Completer<GoogleMapController> _controller = Completer();
-  late BitmapDescriptor _markerIcon;
   String? mapTheme;
 
   late StreamSubscription<Position> _positionStreamSubscription;
@@ -34,27 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final List<Marker> _markers = <Marker>[];
 
-  Future<void> getUserLocation() async {
-    final DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore
-        .collection('users')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .get();
-
-    final double latitude = snapshot.get('latitude');
-    final double longitude = snapshot.get('longitude');
-    print('Coords: $latitude / $longitude');
-  }
-
   Future<Map<String, dynamic>> getInitialCameraPosition() async {
     final DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('users')
         .doc('${FirebaseAuth.instance.currentUser!.email}')
         .get();
-    final double latitude = doc.get('latitude');
-    final double longitude = doc.get('longitude');
     return {
-      "latitude": latitude,
-      "longitude": longitude,
+      "latitude": doc.get('latitude'),
+      "longitude": doc.get('longitude'),
     };
   }
 
@@ -65,11 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
         .collection('my_friends');
     QuerySnapshot subQuerySnapshot = await subSourceCollection.get();
 
-    CollectionReference secondSubSourceCollection =
-        FirebaseFirestore.instance.collection('users');
-
     QuerySnapshot secondSubQuerySnapshot =
-        await secondSubSourceCollection.get();
+        await FirebaseFirestore.instance.collection('users').get();
 
     for (var doc in subQuerySnapshot.docs) {
       for (var secondDoc in secondSubQuerySnapshot.docs) {
@@ -80,9 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: "${doc['email']}",
           ),
         ));
-        print(subQuerySnapshot.docs.length);
-        print(
-            '${doc['email']} | ${secondDoc['latitude']} ${secondDoc['longitude']}');
       }
     }
   }
@@ -123,9 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       QuerySnapshot secondSubQuerySnapshot =
           await secondSubSourceCollection.get();
-      const url =
-          'https://lh3.googleusercontent.com/a/AGNmyxa5GDhSikXVgIkqglvGBR8T2s2EhGXSXXevdzo1=s96-c';
-      final bytes = await NetworkAssetBundle(Uri.parse(url)).load('');
+      final url = '${FirebaseAuth.instance.currentUser!.photoURL}';
+      final myImage = await NetworkAssetBundle(Uri.parse(url)).load('');
       setState(() {
         FirebaseFirestore.instance
             .collection('users')
@@ -134,19 +109,19 @@ class _HomeScreenState extends State<HomeScreen> {
               'latitude': position.latitude,
               'longitude': position.longitude,
             })
-            .then((value) => print("Coords updated successfully"))
-            .catchError((error) => print("Failed to update coords: $error"));
+            .then((value) => log("Coords updated successfully"))
+            .catchError((error) => log("Failed to update coords: $error"));
         _removeMarkersWithTitle("${FirebaseAuth.instance.currentUser!.email}");
         _markers.add(Marker(
           onTap: () {
-            print('Marker');
+            log('Tapped');
           },
           markerId: MarkerId('${FirebaseAuth.instance.currentUser!.email}'),
           position: LatLng(latitude, longitude),
           infoWindow: InfoWindow(
             title: "${FirebaseAuth.instance.currentUser!.email}",
           ),
-          icon: BitmapDescriptor.fromBytes(bytes.buffer.asUint8List()),
+          icon: BitmapDescriptor.fromBytes(myImage.buffer.asUint8List()),
         ));
 
         for (var doc in subQuerySnapshot.docs) {
@@ -154,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _removeMarkersWithTitle("${secondDoc['email']}");
             _markers.add(Marker(
               onTap: () {
-                print('Marker');
+                log('Tapped');
               },
               markerId: MarkerId('${secondDoc['email']}'),
               position: LatLng(secondDoc['latitude'], secondDoc['longitude']),
@@ -165,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
       });
-      print('${position.latitude} / ${position.longitude}');
+      log('${position.latitude} / ${position.longitude}');
     });
   }
 
@@ -176,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool reqs = false;
-
   int count = 0;
 
   void countDocuments() async {
